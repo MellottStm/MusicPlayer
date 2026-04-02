@@ -1,0 +1,31 @@
+/* 整个搜索界面背景图片 */
+.search-root {
+    -fx-background-image: url("Img/bg.png");
+    -fx-background-size: cover;        /* 铺满 */
+    -fx-background-position: center;   /* 居中 */
+    -fx-background-repeat: no-repeat;
+}
+
+/* 按钮背景图片 */
+.search-button {
+    -fx-background-image: url("Img/goal_btn_bg.png");
+    -fx-background-size: cover;
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-font-size: 16px;
+    -fx-text-fill: white;              /* 如果按钮图片是深色，文字调白色 */
+}
+/* 搜索框背景图片 + 圆角 + 半透明效果 */
+.search-textfield {
+    -fx-background-size: cover;
+    -fx-background-radius: 25;         /* 圆角 */
+    -fx-border-radius: 25;
+    -fx-padding: 10 20;                /* 内边距 */
+    -fx-font-size: 16px;
+    -fx-prompt-text-fill: #aaaaaa;
+}
+
+.music-list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
