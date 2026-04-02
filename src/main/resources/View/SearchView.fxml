@@ -10,7 +10,13 @@
    <children>
       <TextField fx:id="searchField" layoutX="234.0" layoutY="42.0" prefHeight="42.0" prefWidth="332.0" promptText="输入你要搜索的音乐" styleClass="search-textfield" stylesheets="@../styles.css" />
       <Button fx:id="searchButton" layoutX="529.0" layoutY="42.0" mnemonicParsing="false" onAction="#handleSearch" prefHeight="42.0" prefWidth="96.0" styleClass="search-button" stylesheets="@../styles.css" text="搜索" textAlignment="JUSTIFY" textFill="WHITE" />
-      <ListView fx:id="searchList" layoutY="100.0" prefHeight="450.0" prefWidth="850.0" styleClass="music-list-view" stylesheets="@../styles.css" visible="false" />
-      <ProgressIndicator layoutX="414.0" layoutY="256.0" visible="false" />
+      <ListView fx:id="searchList"
+                layoutY="100.0"
+                prefHeight="450.0"
+                prefWidth="850.0"
+                styleClass="music-list-view"
+                stylesheets="@../styles.css"
+                visible="false" />
+      <ProgressIndicator fx:id="loadingIndicator" layoutX="414.0" layoutY="256.0" visible="false" />
    </children>
 </AnchorPane>

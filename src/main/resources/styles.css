@@ -29,3 +29,51 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
+
+
+/* ==================== 自定义列表项样式 ==================== */
+.music-list-item {
+    -fx-background-color: transparent;   /* 半透明深色背景 */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0.1, 0, 2); /* 轻微阴影 */
+}
+
+.music-list-item:hover {
+    -fx-background-color: transparent;   /* 悬停时稍亮 */
+    -fx-cursor: hand;
+}
+
+/* 专辑封面样式 */
+.cover-image {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 6, 0.2, 0, 2);
+    -fx-border-radius: 8;
+}
+
+/* 文字样式 - 白色为主 */
+.music-song {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15.5px;
+    -fx-font-weight: bold;
+}
+
+.music-singer {
+    -fx-text-fill: #bbbbbb;
+    -fx-font-size: 13.5px;
+}
+
+.music-album {
+    -fx-text-fill: #888888;
+    -fx-font-size: 12.5px;
+}
+
+
+
+/* ListView 整体背景优化 */
+.music-list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* 选中状态（可选，增加高亮） */
+.music-list-item:selected {
+    -fx-background-color: transparent;
+}
