@@ -5,12 +5,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+
+
+import java.util.Objects;
 
 public class MusicListItemController {
 
     @FXML
-    private HBox root;
+    private VBox root;
     @FXML private ImageView coverImage;
     @FXML private Label songLabel;
     @FXML private Label singerLabel;
@@ -28,11 +31,11 @@ public class MusicListItemController {
             coverImage.setImage(image);
         } else {
             // 设置默认图片
-            coverImage.setImage(null);
+            coverImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/icon.jpg"))));
         }
     }
 
-    public HBox getRoot() {
+    public VBox getRoot() {
         return root;
     }
 

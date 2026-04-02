@@ -25,11 +25,6 @@
     -fx-prompt-text-fill: #aaaaaa;
 }
 
-.music-list-view {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-
 
 /* ==================== 自定义列表项样式 ==================== */
 .music-list-item {
@@ -42,10 +37,8 @@
     -fx-cursor: hand;
 }
 
-/* 专辑封面样式 */
-.cover-image {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 6, 0.2, 0, 2);
-    -fx-border-radius: 8;
+.music-cover {
+   -fx-padding: 100;
 }
 
 /* 文字样式 - 白色为主 */
@@ -71,6 +64,17 @@
 .music-list-view {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
+}
+
+/* 关键：让 ListView 内部的 VirtualFlow（滚动容器）也透明 */
+.music-list-view .virtual-flow {
+    -fx-background-color: transparent;
+}
+
+/* 让所有 ListCell（包括空单元格）默认透明 */
+.music-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0 10 0 10;                  /* 控制 item 之间的间距 */
 }
 
 /* 选中状态（可选，增加高亮） */

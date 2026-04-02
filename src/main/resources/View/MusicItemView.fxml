@@ -5,7 +5,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox xmlns="http://javafx.com/javafx"
+<?import javafx.scene.shape.Line?>
+<?import javafx.geometry.Insets?>
+<VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.smt.UI.MusicListItemController"
       fx:id="root"
@@ -14,18 +16,23 @@
       spacing="16.0"
       styleClass="music-list-item">
 
-    <children>
-        <!-- 专辑封面（带轻微圆角） -->
+
+    <!-- 上半部分：主要内容 -->
+    <HBox alignment="CENTER_LEFT" spacing="16.0" prefHeight="82.0" styleClass="music-content">
+        <!-- 专辑封面 -->
         <ImageView fx:id="coverImage"
                    fitHeight="68.0"
                    fitWidth="68.0"
                    preserveRatio="true"
-                   styleClass="cover-image"/>
-
+                  />
+        <!-- 文字信息 -->
         <VBox spacing="5.0" HBox.hgrow="ALWAYS">
             <Label fx:id="songLabel" styleClass="music-song" text="歌曲名称" />
             <Label fx:id="singerLabel" styleClass="music-singer" text="歌手" />
             <Label fx:id="albumLabel" styleClass="music-album" text="专辑" />
         </VBox>
-    </children>
-</HBox>
+    </HBox>
+
+
+
+</VBox>

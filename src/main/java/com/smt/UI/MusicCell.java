@@ -4,7 +4,7 @@ import com.smt.Data.MusicItem;
 import com.smt.Main;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class MusicCell extends ListCell<MusicItem> {
 
-    private HBox root;
+    private VBox root;
     private MusicListItemController controller;
 
     public MusicCell() {

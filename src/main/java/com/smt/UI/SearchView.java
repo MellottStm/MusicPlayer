@@ -46,8 +46,16 @@ public class SearchView {
         searchList.setVisible(true);
         searchList.setCellFactory(listview -> new MusicCell());
         ObservableList<MusicItem> items = FXCollections.observableArrayList(
-                new MusicItem("1", "game", "滨崎步", null,null),
-                new MusicItem("2", "boy & girl", "滨崎步", null,null)
+                new MusicItem("1", "game", "滨崎步", "Devil May Cry 3 Original Soundtrack",null),
+                new MusicItem("2", "boy & girl", "滨崎步", "Devil May Cry 3 Original Soundtrack",null),
+                new MusicItem("1", "game", "滨崎步", "Devil May Cry 3 Original Soundtrack",null),
+                new MusicItem("2", "boy & girl", "滨崎步", "Devil May Cry 3 Original Soundtrack",null),
+                new MusicItem("1", "game", "滨崎步", "Devil May Cry 3 Original Soundtrack",null),
+                new MusicItem("2", "boy & girl", "滨崎步", "Devil May Cry 3 Original Soundtrack",null),
+                new MusicItem("1", "game", "滨崎步", "Devil May Cry 3 Original Soundtrack",null),
+                new MusicItem("2", "boy & girl", "滨崎步", "Devil May Cry 3 Original Soundtrack",null),
+                new MusicItem("1", "game", "滨崎步", "Devil May Cry 3 Original Soundtrack",null),
+                new MusicItem("2", "boy & girl", "滨崎步", "Devil May Cry 3 Original Soundtrack",null)
         );
         searchList.setItems(items);
     }
