@@ -2,10 +2,14 @@ package com.smt.Utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.smt.Data.MusicItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import org.apache.log4j.Logger;
+
+import static com.smt.Configure.IMAGE_CACHE;
 
 public class MusicPlayer {
 
@@ -111,6 +115,43 @@ public class MusicPlayer {
 
         void onProgress (Duration oldTime,Duration newTime);
 
+        void onComplete ();
+
+    }
+
+    public void loadCoverImage(String coverUrl, ImageView coverImage, Image defaultImage) {
+        // 一开始就显示默认图片
+        coverImage.setImage(defaultImage);
+
+        if (coverUrl == null || coverUrl.trim().isEmpty()) {
+            return;
+        }
+
+        if (IMAGE_CACHE.containsKey(coverUrl)) {
+            Image cachedImage = IMAGE_CACHE.get(coverUrl);
+            if (cachedImage != null) {
+                logger.info("缓存了url:" + coverUrl);
+                coverImage.setImage(cachedImage);
+                return;
+            }
+        }
+
+        // 创建异步加载的图片
+        Image onlineImage = new Image(coverUrl, true);
+
+        // 监听加载完成（成功或失败）
+        onlineImage.progressProperty().addListener((obs, oldProgress, newProgress) -> {
+            if (newProgress.doubleValue() >= 1.0) {  // 加载完成
+                if (!onlineImage.isError()) {
+                    IMAGE_CACHE.put(coverUrl, onlineImage);
+                    // 加载成功，切换为在线图片
+                    coverImage.setImage(onlineImage);
+                } else {
+                    IMAGE_CACHE.put(coverUrl, null); // 标记失败，避免重复请求
+                }
+                // 加载失败就什么都不做，继续显示默认图片
+            }
+        });
     }
 
 

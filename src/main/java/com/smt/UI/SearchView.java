@@ -23,8 +23,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
-
-import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -128,32 +126,18 @@ public class SearchView {
     }
 
 
-    private void loadCoverImage(String coverUrl, ImageView coverImage,Image defaultImage) {
-        if (coverUrl == null || coverUrl.trim().isEmpty()) {
-            coverImage.setImage(defaultImage);
-            return;
-        }
 
-        Image image = new Image(coverUrl, true);
-
-        // 错误时立即切换默认图
-        image.errorProperty().addListener((obs, oldVal, newVal) -> {
-            if (Boolean.TRUE.equals(newVal)) {
-                coverImage.setImage(defaultImage);
-            }
-        });
-
-        coverImage.setImage(image);
-    }
 
 
     public void showPlayCard (MusicItem musicItem) {
-        playCard.setVisible(true);
-        if (isSwitchMusic) {
-            loadCoverImage(musicItem.coverUrl,cover,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
-            isSwitchMusic = false;
+        if (musicItem != null) {
+            playCard.setVisible(true);
+            if (isSwitchMusic) {
+                MusicPlayer.getInstance().loadCoverImage(musicItem.coverUrl, cover, new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
+                isSwitchMusic = false;
+            }
+            msg.setText(musicItem.song + "-" + musicItem.singer);
         }
-        msg.setText( musicItem.song + "-" + musicItem.singer);
     }
 
 
@@ -162,6 +146,7 @@ public class SearchView {
     @FXML
     private void handleSearch() {
         String keyword = searchField.getText().trim();
+        Configure.IMAGE_CACHE.clear();
         if (!keyword.isEmpty()) {
             logger.info("搜索的内容:" + keyword);
             loadingIndicator.setVisible(true);

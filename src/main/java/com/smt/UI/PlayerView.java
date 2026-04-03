@@ -1,13 +1,11 @@
 package com.smt.UI;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.smt.Configure;
 import com.smt.Data.MusicItem;
 import com.smt.Utils.MusicPlayer;
 import com.smt.Utils.NetworkUtil;
 import com.smt.Utils.ThreadManager;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,15 +15,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+
 
 
 public class PlayerView {
@@ -93,30 +87,13 @@ public class PlayerView {
         });
     }
 
-    private void loadCoverImage(String coverUrl, ImageView coverImage,Image defaultImage) {
-        if (coverUrl == null || coverUrl.trim().isEmpty()) {
-            coverImage.setImage(defaultImage);
-            return;
-        }
-
-        Image image = new Image(coverUrl, true);
-
-        // 错误时立即切换默认图
-        image.errorProperty().addListener((obs, oldVal, newVal) -> {
-            if (Boolean.TRUE.equals(newVal)) {
-                coverImage.setImage(defaultImage);
-            }
-        });
-
-        coverImage.setImage(image);
-    }
 
 
     public void startMusic (MusicItem musicItem, ObservableList<MusicItem> musicItemList, Stage listStage) {
         this.musicItem = musicItem;
         this.musicItemList = musicItemList;
         this.listStage = listStage;
-        loadCoverImage(this.musicItem.coverUrl,coverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
+        MusicPlayer.getInstance().loadCoverImage(this.musicItem.coverUrl,coverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
         singer.setText("艺术家:" + musicItem.singer);
         song.setText("歌:" + musicItem.song);
         ThreadManager.setThreadToPool(new Runnable() {
@@ -166,6 +143,11 @@ public class PlayerView {
 
             @Override
             public void onProgress(Duration oldTime, Duration newTime) {
+
+            }
+
+            @Override
+            public void onComplete() {
 
             }
         });
