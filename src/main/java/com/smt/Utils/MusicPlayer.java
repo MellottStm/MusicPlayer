@@ -17,6 +17,8 @@ public class MusicPlayer {
 
     private MediaPlayer mediaPlayer;
 
+    private MusicItem currentMusicItem;
+
     private MusicPlayer() {}   // 单例
 
     public static MusicPlayer getInstance() {
@@ -26,17 +28,16 @@ public class MusicPlayer {
         return instance;
     }
 
-    public void play (JSONArray resJson) {
+    public void play (MusicItem currentMusicItem,JSONArray resJson,PlayerCallBack playerCallBack) {
+        this.currentMusicItem = currentMusicItem;
+        stop();
         mediaPlayer = new MediaPlayer(new Media(resJson.getJSONObject(0).getString("url")));
         // 当媒体准备好后，设置总时长
-        mediaPlayer.setOnReady(() -> {
-            Duration totalDuration = mediaPlayer.getTotalDuration();
-            logger.info("媒体准备完成，总时长: " + totalDuration);
-        });
+        mediaPlayer.setOnReady(playerCallBack::onReady);
 
         // 实时更新当前播放时间和进度条
         mediaPlayer.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
-
+            playerCallBack.onProgress(oldTime,newTime);
         });
 
         // 播放结束
@@ -72,6 +73,11 @@ public class MusicPlayer {
     }
 
 
+    public MusicItem getCurrentMusicItem () {
+        return currentMusicItem;
+    }
+
+
     // 获取当前播放进度（秒）
     public double getCurrentTimeSeconds() {
         if (mediaPlayer != null) {
@@ -98,5 +104,14 @@ public class MusicPlayer {
         int seconds = (int) (duration.toSeconds() % 60);
         return String.format("%02d:%02d", minutes, seconds);
     }
+
+    public interface PlayerCallBack {
+
+        void onReady ();
+
+        void onProgress (Duration oldTime,Duration newTime);
+
+    }
+
 
 }

@@ -68,9 +68,8 @@ public class PlayerView {
     @FXML
     private Slider progressSlider;
 
-    private boolean isPlaying;
 
-    private MusicItem musicItem = new MusicItem();
+    private MusicItem musicItem;
 
     private ObservableList<MusicItem> musicItemList;
 
@@ -138,22 +137,28 @@ public class PlayerView {
     }
 
     public void playMusic () {
-        if (isPlaying) {
+        if (MusicPlayer.getInstance().isPlaying()) {
             playBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
-            isPlaying = false;
             MusicPlayer.getInstance().pause();
         }  else {
             playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
-            isPlaying = true;
             MusicPlayer.getInstance().resume();
         }
     }
 
     public void musicPlay (JSONArray resJson) {
-        MusicPlayer.getInstance().play(resJson);
-        isPlaying = true;
+        MusicPlayer.getInstance().play(this.musicItem, resJson, new MusicPlayer.PlayerCallBack() {
+            @Override
+            public void onReady() {
+                duration.setText(MusicPlayer.getInstance().getTotalDuration());
+            }
+
+            @Override
+            public void onProgress(Duration oldTime, Duration newTime) {
+
+            }
+        });
         playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
-        duration.setText(MusicPlayer.getInstance().getTotalDuration());
     }
 
 }

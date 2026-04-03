@@ -9,7 +9,9 @@
 /* 按钮背景图片 */
 .search-button {
     -fx-background-image: url("Img/goal_btn_bg.png");
-    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: contain;
+    -fx-background-color: transparent;
     -fx-background-radius: 25;
     -fx-border-radius: 25;
     -fx-font-size: 16px;
@@ -116,4 +118,11 @@
     -fx-background-color: transparent;
     -fx-background-repeat: no-repeat;
     -fx-background-size: contain;
+}
+
+.play-card {
+    -fx-background-image: url("Img/play_bg.png");
+    -fx-background-size: cover;        /* 铺满 */
+    -fx-background-position: center;   /* 居中 */
+    -fx-background-repeat: no-repeat;
 }
