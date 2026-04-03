@@ -37,10 +37,6 @@
     -fx-cursor: hand;
 }
 
-.music-cover {
-   -fx-padding: 100;
-}
-
 /* 文字样式 - 白色为主 */
 .music-song {
     -fx-text-fill: #ffffff;
