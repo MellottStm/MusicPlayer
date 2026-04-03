@@ -15,8 +15,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // 加载 SearchView.fxml
-//        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/View/SearchView.fxml"));
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/View/PlayerView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/View/SearchView.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 850, 550);   // 窗口大小可调整
         try {
             Image icon = new Image(Main.class.getResourceAsStream("/Img/icon.jpg"));

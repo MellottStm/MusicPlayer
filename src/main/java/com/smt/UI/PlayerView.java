@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.smt.Configure;
 import com.smt.Data.MusicItem;
+import com.smt.Utils.MusicPlayer;
 import com.smt.Utils.NetworkUtil;
 import com.smt.Utils.ThreadManager;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,9 +19,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -27,7 +32,7 @@ public class PlayerView {
 
     private static String TAG = "PlayerView";
 
-    public final static Logger logger = Logger.getLogger(TAG);
+    private final static Logger logger = Logger.getLogger(TAG);
 
 
     @FXML
@@ -67,7 +72,10 @@ public class PlayerView {
 
     private MusicItem musicItem = new MusicItem();
 
-    private MediaPlayer mediaPlayer;
+    private ObservableList<MusicItem> musicItemList;
+
+    private Stage listStage;
+
     @FXML
     public void initialize() {
         logger.info("初始化完成！");
@@ -77,17 +85,20 @@ public class PlayerView {
                 playMusic();
             }
         });
-        startMusic(new MusicItem(
-                "1818064296",
-                "Bury the Light",
-                "Victor Borba",
-                "DEVIL MAY CRY 5 SPECIAL EDITION VERGIL SOUND SELECTION",
-                "http://p4.music.126.net/1yMEfakS6S6wOU0ypvXg9g==/109951165698662473.jpg"));
+        listBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                ((Stage)listBtn.getScene().getWindow()).hide();
+                listStage.show();
+            }
+        });
     }
 
 
-    public void startMusic (MusicItem musicItem) {
+    public void startMusic (MusicItem musicItem, ObservableList<MusicItem> musicItemList, Stage listStage) {
         this.musicItem = musicItem;
+        this.musicItemList = musicItemList;
+        this.listStage = listStage;
         if (musicItem.coverUrl != null && !musicItem.coverUrl.isEmpty()) {
             // 使用 background loading，避免卡顿
             Image image = new Image(musicItem.coverUrl, true); // true = background loading
@@ -130,41 +141,19 @@ public class PlayerView {
         if (isPlaying) {
             playBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
             isPlaying = false;
-            if (mediaPlayer != null) {
-                mediaPlayer.pause();
-            }
+            MusicPlayer.getInstance().pause();
         }  else {
             playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
             isPlaying = true;
-            if (mediaPlayer != null) {
-                mediaPlayer.play();
-            }
+            MusicPlayer.getInstance().resume();
         }
     }
 
     public void musicPlay (JSONArray resJson) {
-        mediaPlayer = new MediaPlayer(new Media(resJson.getJSONObject(0).getString("url")));
-        // 当媒体准备好后，设置总时长
-        mediaPlayer.setOnReady(() -> {
-            Duration totalDuration = mediaPlayer.getTotalDuration();
-            progressSlider.setMax(totalDuration.toSeconds());
-            duration.setText(formatTime(totalDuration));
-            logger.info("媒体准备完成，总时长: " + totalDuration);
-        });
-
-        // 实时更新当前播放时间和进度条
-        mediaPlayer.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
-
-        });
-
-        // 播放结束
-        mediaPlayer.setOnEndOfMedia(() -> {
-            logger.info("播放结束");
-            // 可以在这里自动下一首
-        });
-        mediaPlayer.play();
+        MusicPlayer.getInstance().play(resJson);
         isPlaying = true;
         playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
+        duration.setText(MusicPlayer.getInstance().getTotalDuration());
     }
 
 }
