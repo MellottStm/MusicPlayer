@@ -93,19 +93,30 @@ public class PlayerView {
         });
     }
 
+    private void loadCoverImage(String coverUrl, ImageView coverImage,Image defaultImage) {
+        if (coverUrl == null || coverUrl.trim().isEmpty()) {
+            coverImage.setImage(defaultImage);
+            return;
+        }
+
+        Image image = new Image(coverUrl, true);
+
+        // 错误时立即切换默认图
+        image.errorProperty().addListener((obs, oldVal, newVal) -> {
+            if (Boolean.TRUE.equals(newVal)) {
+                coverImage.setImage(defaultImage);
+            }
+        });
+
+        coverImage.setImage(image);
+    }
+
 
     public void startMusic (MusicItem musicItem, ObservableList<MusicItem> musicItemList, Stage listStage) {
         this.musicItem = musicItem;
         this.musicItemList = musicItemList;
         this.listStage = listStage;
-        if (musicItem.coverUrl != null && !musicItem.coverUrl.isEmpty()) {
-            // 使用 background loading，避免卡顿
-            Image image = new Image(musicItem.coverUrl, true); // true = background loading
-            coverImage.setImage(image);
-        } else {
-            // 设置默认图片
-            coverImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/icon.jpg"))));
-        }
+        loadCoverImage(this.musicItem.coverUrl,coverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
         singer.setText("艺术家:" + musicItem.singer);
         song.setText("歌:" + musicItem.song);
         ThreadManager.setThreadToPool(new Runnable() {

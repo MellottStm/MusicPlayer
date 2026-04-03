@@ -128,17 +128,29 @@ public class SearchView {
     }
 
 
+    private void loadCoverImage(String coverUrl, ImageView coverImage,Image defaultImage) {
+        if (coverUrl == null || coverUrl.trim().isEmpty()) {
+            coverImage.setImage(defaultImage);
+            return;
+        }
+
+        Image image = new Image(coverUrl, true);
+
+        // 错误时立即切换默认图
+        image.errorProperty().addListener((obs, oldVal, newVal) -> {
+            if (Boolean.TRUE.equals(newVal)) {
+                coverImage.setImage(defaultImage);
+            }
+        });
+
+        coverImage.setImage(image);
+    }
+
+
     public void showPlayCard (MusicItem musicItem) {
         playCard.setVisible(true);
         if (isSwitchMusic) {
-            if (musicItem.coverUrl != null && !musicItem.coverUrl.isEmpty()) {
-                // 使用 background loading，避免卡顿
-                Image image = new Image(musicItem.coverUrl, true); // true = background loading
-                cover.setImage(image);
-            } else {
-                // 设置默认图片
-                cover.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/icon.jpg"))));
-            }
+            loadCoverImage(musicItem.coverUrl,cover,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
             isSwitchMusic = false;
         }
         msg.setText( musicItem.song + "-" + musicItem.singer);

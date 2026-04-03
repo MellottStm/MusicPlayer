@@ -23,20 +23,30 @@ public class MusicListItemController {
         songLabel.setText(item.song);
         singerLabel.setText(item.singer);
         albumLabel.setText(item.album != null ? item.album : "");
-
-        // 异步加载网络图片（推荐方式）
-        if (item.coverUrl != null && !item.coverUrl.isEmpty()) {
-            // 使用 background loading，避免卡顿
-            Image image = new Image(item.coverUrl, true); // true = background loading
-            coverImage.setImage(image);
-        } else {
-            // 设置默认图片
-            coverImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/icon.jpg"))));
-        }
+        loadCoverImage(item.coverUrl,coverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
     }
 
     public VBox getRoot() {
         return root;
     }
+
+    private void loadCoverImage(String coverUrl, ImageView coverImage,Image defaultImage) {
+        if (coverUrl == null || coverUrl.trim().isEmpty()) {
+            coverImage.setImage(defaultImage);
+            return;
+        }
+
+        Image image = new Image(coverUrl, true);
+
+        // 错误时立即切换默认图
+        image.errorProperty().addListener((obs, oldVal, newVal) -> {
+            if (Boolean.TRUE.equals(newVal)) {
+                coverImage.setImage(defaultImage);
+            }
+        });
+
+        coverImage.setImage(image);
+    }
+
 
 }
