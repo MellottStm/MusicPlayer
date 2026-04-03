@@ -77,3 +77,7 @@
 .music-list-item:selected {
     -fx-background-color: transparent;
 }
+
+.music-list-view .scroll-bar {
+    -fx-opacity: 0.5; /* 设置滚动条的整体透明度 */
+}

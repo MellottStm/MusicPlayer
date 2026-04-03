@@ -77,3 +77,43 @@
 .music-list-item:selected {
     -fx-background-color: transparent;
 }
+
+.music-list-view .scroll-bar {
+    -fx-opacity: 0.5; /* 设置滚动条的整体透明度 */
+}
+
+/* 按钮背景图片 */
+.before-button {
+    -fx-background-image: url("Img/radio_before.png");
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: contain;
+}
+
+.next-button {
+    -fx-background-image: url("Img/radio_next.png");
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: contain;
+}
+
+.play-button {
+    -fx-background-image: url("Img/radio_stop.png");
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: contain;
+}
+
+.play-mod-button {
+    -fx-background-image: url("Img/radio_list_play.png");
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: contain;
+}
+
+.play-list-button {
+    -fx-background-image: url("Img/music_list_btn.png");
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: contain;
+}
