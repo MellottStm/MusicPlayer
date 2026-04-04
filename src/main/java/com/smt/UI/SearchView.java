@@ -8,6 +8,7 @@ import com.smt.Main;
 import com.smt.Utils.MusicPlayer;
 import com.smt.Utils.NetworkUtil;
 import com.smt.Utils.ThreadManager;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,6 +28,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.log4j.Logger;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -123,9 +125,16 @@ public class SearchView {
 
     private int playIndex;
 
+    private TranslateTransition slideTransition;
+
+    private String[] playMode = {"顺序播放","单曲循环","随机播放"};
+
+    private int playModeIndex = 0;
+
     @FXML
     public void initialize() {
         logger.info("初始化完成!");
+        initAnimation();
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -147,6 +156,30 @@ public class SearchView {
                 }
             }
         },0,1000);
+        playViewPlayModBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (playModeIndex < playMode.length - 1) {
+                    playModeIndex ++;
+                } else {
+                    playModeIndex = 0;
+                }
+                switch (playMode[playModeIndex]) {
+                    case "顺序播放":
+                        playViewPlayModBtn.setStyle("-fx-background-image: url(\"Img/radio_list_play.png\");");
+                        Configure.currentPlayMod = Configure.playMod.list;
+                        break;
+                    case "随机播放":
+                        playViewPlayModBtn.setStyle("-fx-background-image: url(\"Img/radio_random_play.png\");");
+                        Configure.currentPlayMod = Configure.playMod.random;
+                        break;
+                    case "单曲循环":
+                        playViewPlayModBtn.setStyle("-fx-background-image: url(\"Img/radio_loop_play.png\");");
+                        Configure.currentPlayMod = Configure.playMod.single;
+                        break;
+                }
+            }
+        });
         playCard.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -224,8 +257,15 @@ public class SearchView {
                 playBefore();
             }
         });
+    }
 
 
+    private void initAnimation () {
+        slideTransition = new TranslateTransition(Duration.millis(300), playView);  // 300ms 比较丝滑
+        slideTransition.setInterpolator(javafx.animation.Interpolator.EASE_OUT);   // 缓动效果
+        // 默认隐藏在底部
+        playView.setTranslateY(playView.getHeight());   // 先移到底部（数值比 playView 高度大即可）
+        playView.setVisible(false);
     }
 
 
@@ -239,10 +279,24 @@ public class SearchView {
 
     private void openPlayView () {
         playView.setVisible(true);
+        playView.setTranslateY(playView.getHeight()); // 确保从下方开始
+
+        slideTransition.setFromY(playView.getTranslateY());
+        slideTransition.setToY(0);
+        slideTransition.setOnFinished(e -> {
+            // 动画结束后的可选操作
+        });
+        slideTransition.play();
     }
 
     private void closePlayView () {
-        playView.setVisible(false);
+        slideTransition.setFromY(0);
+        slideTransition.setToY(playView.getHeight());
+        slideTransition.setOnFinished(e -> {
+            playView.setVisible(false);
+            playView.setTranslateY(playView.getHeight()); // 重置位置，方便下次打开
+        });
+        slideTransition.play();
     }
 
 
@@ -263,6 +317,18 @@ public class SearchView {
         } else {
             playIndex = musicItemList.size() - 1;
         }
+        showPlayCard(musicItemList.get(playIndex));
+        startMusic (playIndex,musicItemList.get(playIndex), musicItemList);
+    }
+
+    public void playRandom () {
+        Random random = new Random();
+        playIndex = random.nextInt(musicItemList.size());
+        showPlayCard(musicItemList.get(playIndex));
+        startMusic (playIndex,musicItemList.get(playIndex), musicItemList);
+    }
+
+    public void loopPlay () {
         showPlayCard(musicItemList.get(playIndex));
         startMusic (playIndex,musicItemList.get(playIndex), musicItemList);
     }
@@ -292,6 +358,10 @@ public class SearchView {
         if (musicItem != null) {
             MusicPlayer.getInstance().loadCoverImage(musicItem.coverUrl, cover, new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
             msg.setText(musicItem.song + "-" + musicItem.singer);
+            isCollectedBtn.setVisible(true);
+            playBtn.setVisible(true);
+            nextBtn.setVisible(true);
+            beforeBtn.setVisible(true);
         }
     }
 
@@ -449,9 +519,11 @@ public class SearchView {
                         break;
                     case single:
                         logger.info("单曲循环:继续播放当前音乐");
+                        loopPlay();
                         break;
                     case random:
                         logger.info("随机播放:随机播放下一首");
+                        playRandom();
                         break;
                 }
             }
