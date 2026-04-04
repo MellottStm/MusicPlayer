@@ -32,7 +32,6 @@ public class PlayerView {
 
     private final static Logger logger = Logger.getLogger(TAG);
 
-
     @FXML
     private ImageView coverImage;
 
@@ -81,6 +80,8 @@ public class PlayerView {
 
     private SearchView searchView;
 
+    @FXML
+    public Button isCollectedBtn;
 
     @FXML
     public void initialize() {

@@ -6,7 +6,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="550.0" prefWidth="850.0" styleClass="search-root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.smt.UI.PlayerView">
+<AnchorPane prefHeight="550.0" prefWidth="850.0" styleClass="search-root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.smt.UI.PlayerView">
    <children>
       <ImageView fx:id="coverImage" fitHeight="269.0" fitWidth="273.0" layoutX="152.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true" />
       <Label fx:id="song" layoutX="471.0" layoutY="172.0" styleClass="music-singer" stylesheets="@../styles.css" text="歌手" />
@@ -18,6 +18,7 @@
       <Button fx:id="nextBtn" layoutX="153.0" layoutY="482.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="44.0" styleClass="next-button" stylesheets="@../styles.css" />
       <Button fx:id="playModBtn" layoutX="675.0" layoutY="482.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="44.0" styleClass="play-mod-button" stylesheets="@../styles.css" />
       <Button fx:id="listBtn" layoutX="737.0" layoutY="482.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="44.0" styleClass="play-list-button" stylesheets="@../styles.css" />
-      <Slider fx:id="progressSlider" layoutX="75.0" layoutY="415.0" min="0.0" prefHeight="14.0" prefWidth="715.0"/>
+      <Slider fx:id="progressSlider" layoutX="75.0" layoutY="415.0" min="0.0" prefHeight="14.0" prefWidth="715.0" />
+      <Button fx:id="isCollectedBtn" layoutX="608.0" layoutY="479.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="35.0" styleClass="is-collected-button" stylesheets="@../styles.css" />
    </children>
 </AnchorPane>
