@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.smt.Configure;
 import com.smt.Data.MusicItem;
-import com.smt.Main;
+import com.smt.Utils.CacheManager;
 import com.smt.Utils.MusicPlayer;
 import com.smt.Utils.NetworkUtil;
 import com.smt.Utils.ThreadManager;
@@ -15,10 +15,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -156,6 +152,12 @@ public class SearchView {
                 }
             }
         },0,1000);
+        collectedListBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+            }
+        });
         playViewPlayModBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -260,6 +262,22 @@ public class SearchView {
     }
 
 
+    public void loadData () {
+        JSONObject cacheJson = CacheManager.loadCache();
+        if (cacheJson != null) {
+            MusicItem musicItem = new MusicItem(
+                    cacheJson.getJSONObject("currentMusic").getString("id"),
+                    cacheJson.getJSONObject("currentMusic").getString("song"),
+                    cacheJson.getJSONObject("currentMusic").getString("singer"),
+                    cacheJson.getJSONObject("currentMusic").getString("album"),
+                    cacheJson.getJSONObject("currentMusic").getString("coverUrl"),
+                    cacheJson.getJSONObject("currentMusic").getBoolean("isCollected"));
+            showPlayCard(musicItem);
+        }
+    }
+
+
+
     private void initAnimation () {
         slideTransition = new TranslateTransition(Duration.millis(300), playView);  // 300ms 比较丝滑
         slideTransition.setInterpolator(javafx.animation.Interpolator.EASE_OUT);   // 缓动效果
@@ -302,35 +320,43 @@ public class SearchView {
 
 
     public void playNext () {
-        if (playIndex < musicItemList.size() - 1) {
-            playIndex ++;
-        } else {
-            playIndex = 0;
+        if (musicItemList != null) {
+            if (playIndex < musicItemList.size() - 1) {
+                playIndex++;
+            } else {
+                playIndex = 0;
+            }
+            showPlayCard(musicItemList.get(playIndex));
+            startMusic(playIndex, musicItemList.get(playIndex), musicItemList);
         }
-        showPlayCard(musicItemList.get(playIndex));
-        startMusic (playIndex,musicItemList.get(playIndex), musicItemList);
     }
 
     public void playBefore () {
-        if (playIndex > 0) {
-            playIndex --;
-        } else {
-            playIndex = musicItemList.size() - 1;
+        if (musicItemList != null) {
+            if (playIndex > 0) {
+                playIndex--;
+            } else {
+                playIndex = musicItemList.size() - 1;
+            }
+            showPlayCard(musicItemList.get(playIndex));
+            startMusic(playIndex, musicItemList.get(playIndex), musicItemList);
         }
-        showPlayCard(musicItemList.get(playIndex));
-        startMusic (playIndex,musicItemList.get(playIndex), musicItemList);
     }
 
     public void playRandom () {
-        Random random = new Random();
-        playIndex = random.nextInt(musicItemList.size());
-        showPlayCard(musicItemList.get(playIndex));
-        startMusic (playIndex,musicItemList.get(playIndex), musicItemList);
+        if (musicItemList != null) {
+            Random random = new Random();
+            playIndex = random.nextInt(musicItemList.size());
+            showPlayCard(musicItemList.get(playIndex));
+            startMusic(playIndex, musicItemList.get(playIndex), musicItemList);
+        }
     }
 
     public void loopPlay () {
-        showPlayCard(musicItemList.get(playIndex));
-        startMusic (playIndex,musicItemList.get(playIndex), musicItemList);
+        if (musicItemList != null) {
+            showPlayCard(musicItemList.get(playIndex));
+            startMusic(playIndex, musicItemList.get(playIndex), musicItemList);
+        }
     }
 
 
@@ -430,7 +456,7 @@ public class SearchView {
                     musicJson.getString("song"),
                     musicJson.getString("singer"),
                     musicJson.getString("album"),
-                    musicJson.getString("cover")));
+                    musicJson.getString("cover"),false));
         }
         searchList.setItems(items);
         searchList.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -450,12 +476,13 @@ public class SearchView {
         showPlayCard(musicItem);
         playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
         openPlayView();
-        startMusic(playIndex,musicItem,items);     // ← 关键：传递数据
+        startMusic(playIndex,musicItem,items);
     }
 
 
     public void startMusic (int playIndex,MusicItem musicItem, ObservableList<MusicItem> musicItemList) {
         this.musicItem = musicItem;
+        CacheManager.saveCurrentMusicCache(musicItem);
         this.musicItemList = musicItemList;
         this.playIndex = playIndex;
         MusicPlayer.getInstance().loadCoverImage(this.musicItem.coverUrl,playViewCoverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));

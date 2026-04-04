@@ -19,12 +19,13 @@ public class MusicItem {
     }
 
 
-    public MusicItem (String id,String song,String singer,String album,String coverUrl) {
+    public MusicItem (String id,String song,String singer,String album,String coverUrl,boolean isCollected) {
         this.id = id;
         this.song = song;
         this.singer = singer;
         this.album = album;
         this.coverUrl = coverUrl;
+        this.isCollected = isCollected;
     }
 
 

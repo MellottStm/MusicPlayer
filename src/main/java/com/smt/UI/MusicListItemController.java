@@ -21,8 +21,8 @@ public class MusicListItemController {
 
     public void setData(MusicItem item) {
         songLabel.setText(item.song);
-        singerLabel.setText(item.singer);
-        albumLabel.setText(item.album != null ? item.album : "");
+        singerLabel.setText("歌手:" + item.singer);
+        albumLabel.setText("专辑:" + item.album);
         MusicPlayer.getInstance().loadCoverImage(item.coverUrl,coverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
     }
 

@@ -1,5 +1,6 @@
 package com.smt;
 
+import com.smt.UI.SearchView;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -29,5 +30,7 @@ public class Main extends Application {
         stage.setTitle("MusicPlayer");
         stage.setScene(scene);
         stage.show();
+        SearchView searchView = fxmlLoader.getController();
+        searchView.loadData();
     }
 }
