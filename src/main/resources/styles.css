@@ -120,6 +120,13 @@
     -fx-background-size: contain;
 }
 
+.close-play-list-button {
+    -fx-background-image: url("Img/close_btn.png");
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: contain;
+}
+
 
 .is-collected-button {
     -fx-background-image: url("Img/is_collected_white.png");
