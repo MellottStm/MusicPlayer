@@ -41,14 +41,10 @@ public class MusicPlayer {
 
         // 实时更新当前播放时间和进度条
         mediaPlayer.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
-            playerCallBack.onProgress(oldTime,newTime);
+            playerCallBack.onProgress(formatTime(newTime));
         });
+        mediaPlayer.setOnEndOfMedia(playerCallBack::onComplete);
 
-        // 播放结束
-        mediaPlayer.setOnEndOfMedia(() -> {
-            logger.info("播放结束");
-            // 可以在这里自动下一首
-        });
         mediaPlayer.play();
     }
 
@@ -83,11 +79,11 @@ public class MusicPlayer {
 
 
     // 获取当前播放进度（秒）
-    public double getCurrentTimeSeconds() {
+    public String getCurrentTimeSeconds() {
         if (mediaPlayer != null) {
-            return mediaPlayer.getCurrentTime().toSeconds();
+            return formatTime(mediaPlayer.getCurrentTime());
         }
-        return 0;
+        return "00:00";
     }
 
     //获取总进度
@@ -99,8 +95,29 @@ public class MusicPlayer {
     }
 
 
+    public double getTotalTime () {
+        if (mediaPlayer != null) {
+            return mediaPlayer.getTotalDuration().toSeconds();
+        }
+        return 0;
+    }
 
-    private String formatTime(Duration duration) {
+    public double getCurrentTime () {
+        if (mediaPlayer != null) {
+            return mediaPlayer.getCurrentTime().toSeconds();
+        }
+        return 0;
+    }
+
+    // 跳转到指定位置（秒）
+    public void seekTo(double seconds) {
+        if (mediaPlayer != null) {
+            mediaPlayer.seek(Duration.seconds(seconds));
+        }
+    }
+
+
+    public String formatTime(Duration duration) {
         if (duration == null || duration.isUnknown() || duration.isIndefinite()) {
             return "00:00";
         }
@@ -113,7 +130,7 @@ public class MusicPlayer {
 
         void onReady ();
 
-        void onProgress (Duration oldTime,Duration newTime);
+        void onProgress (String duration);
 
         void onComplete ();
 

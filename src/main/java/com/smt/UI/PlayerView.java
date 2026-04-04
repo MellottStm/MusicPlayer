@@ -16,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.log4j.Logger;
@@ -73,6 +74,8 @@ public class PlayerView {
 
     public Timer timer;
 
+    private boolean isDrag;
+
 
     @FXML
     public void initialize() {
@@ -90,6 +93,31 @@ public class PlayerView {
                 listStage.show();
             }
         });
+
+        progressSlider.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                isDrag = true;
+            }
+        });
+
+        progressSlider.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (MusicPlayer.getInstance().getTotalTime() > 0) {
+                    MusicPlayer.getInstance().seekTo(progressSlider.getValue());
+                }
+                isDrag = false;
+            }
+        });
+        progressSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (MusicPlayer.getInstance().getTotalTime() > 0) {
+                double seconds = newVal.doubleValue();
+                currentDuration.setText(formatSeconds(seconds));   // 下面会给出
+            }
+        });
+
+
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -112,7 +140,13 @@ public class PlayerView {
             }
         },0,1000);
     }
-
+    // 把秒数转成 00:00 格式
+    private String formatSeconds(double seconds) {
+        if (seconds < 0) seconds = 0;
+        int min = (int) (seconds / 60);
+        int sec = (int) (seconds % 60);
+        return String.format("%02d:%02d", min, sec);
+    }
 
 
     public void startMusic (MusicItem musicItem, ObservableList<MusicItem> musicItemList, Stage listStage) {
@@ -141,14 +175,6 @@ public class PlayerView {
             }
         });
     }
-    private String formatTime(Duration duration) {
-        if (duration == null || duration.isUnknown() || duration.isIndefinite()) {
-            return "00:00";
-        }
-        int minutes = (int) duration.toMinutes();
-        int seconds = (int) (duration.toSeconds() % 60);
-        return String.format("%02d:%02d", minutes, seconds);
-    }
 
     public void playMusic () {
         if (MusicPlayer.getInstance().isPlaying()) {
@@ -165,16 +191,24 @@ public class PlayerView {
             @Override
             public void onReady() {
                 duration.setText(MusicPlayer.getInstance().getTotalDuration());
+                progressSlider.setValue(0);
+                progressSlider.setMax(MusicPlayer.getInstance().getTotalTime());
             }
 
             @Override
-            public void onProgress(Duration oldTime, Duration newTime) {
-
+            public void onProgress(String duration) {
+                logger.info("当前播放进度:" + duration);
+                currentDuration.setText(duration);
+                if (!isDrag) {
+                    progressSlider.setValue(MusicPlayer.getInstance().getCurrentTime());
+                }
             }
+
 
             @Override
             public void onComplete() {
-
+                progressSlider.setValue(0);
+                logger.info("已播放完毕!");
             }
         });
         playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
