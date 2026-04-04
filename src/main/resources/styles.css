@@ -120,6 +120,15 @@
     -fx-background-size: contain;
 }
 
+
+.is-collected-button {
+    -fx-background-image: url("Img/music_list_btn.png");
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: contain;
+}
+
+
 .play-card {
     -fx-background-image: url("Img/play_bg.png");
     -fx-background-size: cover;        /* 铺满 */

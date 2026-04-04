@@ -60,6 +60,12 @@ public class SearchView {
     public Button nextBtn;
 
     @FXML
+    public Button collectedListBtn;
+
+    @FXML
+    public Button isCollectedBtn;
+
+    @FXML
     public ImageView cover;
 
     @FXML

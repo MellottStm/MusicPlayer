@@ -20,7 +20,9 @@
             <Button fx:id="beforeBtn" layoutX="688.0" layoutY="15.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="28.0" styleClass="before-button" stylesheets="@../styles.css" />
             <Button fx:id="nextBtn" layoutX="781.0" layoutY="15.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="28.0" styleClass="next-button" stylesheets="@../styles.css" />
             <ImageView fx:id="cover" fitHeight="36.0" fitWidth="38.0" layoutX="27.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="msg" layoutX="139.0" layoutY="19.0" prefHeight="20.0" prefWidth="335.0" styleClass="music-song" stylesheets="@../styles.css" />
+            <Label fx:id="msg" layoutX="90.0" layoutY="17.0" prefHeight="20.0" prefWidth="335.0" styleClass="music-song" stylesheets="@../styles.css" />
+            <Button fx:id="collectedListBtn" layoutX="590.0" layoutY="15.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="28.0" styleClass="play-list-button" stylesheets="@../styles.css" />
+            <Button fx:id="isCollectedBtn" layoutX="632.0" layoutY="15.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="28.0" styleClass="is-collected-button" stylesheets="@../styles.css" />
          </children>
       </AnchorPane>
    </children>
