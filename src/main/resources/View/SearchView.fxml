@@ -37,7 +37,7 @@
             <Button fx:id="playViewPlayBtn" layoutX="74.0" layoutY="475.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="44.0" styleClass="play-button" stylesheets="@../styles.css" />
             <Button fx:id="playViewNextBtn" layoutX="131.0" layoutY="482.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="44.0" styleClass="next-button" stylesheets="@../styles.css" />
             <Button fx:id="playViewPlayModBtn" layoutX="795.0" layoutY="482.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="44.0" styleClass="play-mod-button" stylesheets="@../styles.css" />
-            <Button fx:id="playViewListBtn" layoutX="22.0" layoutY="20.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="35.0" styleClass="play-list-button" stylesheets="@../styles.css" />
+            <Button fx:id="playViewListBtn" layoutX="22.0" layoutY="20.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="35.0" styleClass="close-play-list-button" stylesheets="@../styles.css" />
             <Slider fx:id="playViewProgressSlider" layoutX="75.0" layoutY="415.0" min="0.0" prefHeight="14.0" prefWidth="696.0" />
             <Button fx:id="playViewIsCollectedBtn" layoutX="736.0" layoutY="479.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="35.0" styleClass="is-collected-button" stylesheets="@../styles.css" />
          </children>
