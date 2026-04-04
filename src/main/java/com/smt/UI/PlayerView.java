@@ -76,6 +76,10 @@ public class PlayerView {
 
     private boolean isDrag;
 
+    private int playIndex;
+
+    private SearchView searchView;
+
 
     @FXML
     public void initialize() {
@@ -116,8 +120,19 @@ public class PlayerView {
                 currentDuration.setText(formatSeconds(seconds));   // 下面会给出
             }
         });
+        nextBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                playNext();
+            }
+        });
 
-
+        beforeBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                playBefore();
+            }
+        });
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -148,11 +163,16 @@ public class PlayerView {
         return String.format("%02d:%02d", min, sec);
     }
 
+    public void setSearchView (SearchView searchView) {
+        this.searchView = searchView;
+    }
 
-    public void startMusic (MusicItem musicItem, ObservableList<MusicItem> musicItemList, Stage listStage) {
+
+    public void startMusic (int playIndex,MusicItem musicItem, ObservableList<MusicItem> musicItemList, Stage listStage) {
         this.musicItem = musicItem;
         this.musicItemList = musicItemList;
         this.listStage = listStage;
+        this.playIndex = playIndex;
         MusicPlayer.getInstance().loadCoverImage(this.musicItem.coverUrl,coverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
         singer.setText("艺术家:" + musicItem.singer);
         song.setText("歌:" + musicItem.song);
@@ -209,9 +229,44 @@ public class PlayerView {
             public void onComplete() {
                 progressSlider.setValue(0);
                 logger.info("已播放完毕!");
+                switch (Configure.currentPlayMod) {
+                    case list:
+                        logger.info("列表循环:播放下一首");
+                        playNext();
+                        break;
+                    case single:
+                        logger.info("单曲循环:继续播放当前音乐");
+                        break;
+                    case random:
+                        logger.info("随机播放:随机播放下一首");
+                        break;
+                }
             }
         });
         playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
     }
+
+
+    public void playNext () {
+        if (playIndex < musicItemList.size() - 1) {
+            playIndex ++;
+        } else {
+            playIndex = 0;
+        }
+        searchView.showPlayCard(musicItemList.get(playIndex));
+        startMusic (playIndex,musicItemList.get(playIndex), musicItemList, listStage);
+    }
+
+    public void playBefore () {
+        if (playIndex > 0) {
+            playIndex --;
+        } else {
+            playIndex = musicItemList.size() - 1;
+        }
+        searchView.showPlayCard(musicItemList.get(playIndex));
+        startMusic (playIndex,musicItemList.get(playIndex), musicItemList, listStage);
+    }
+
+
 
 }

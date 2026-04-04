@@ -12,4 +12,14 @@ public class Configure {
     public final static String getMusicPlayUrl = "https://api.qijieya.cn/meting/";
 
     public final static Map<String, Image> IMAGE_CACHE = new HashMap<>();
+
+    public enum playMod {
+        list, //列表循环
+        random, //随机播放
+        single, //单曲循环
+    }
+
+    public static playMod currentPlayMod = playMod.list;
+
+
 }

@@ -63,13 +63,13 @@ public class SearchView {
     @FXML
     public Label msg;
 
-
     public Timer timer;
-
-
 
     public Stage playerStage;
 
+    public ObservableList<MusicItem> currentItems;
+
+    private PlayerView playerController;
 
     @FXML
     public void initialize() {
@@ -112,7 +112,33 @@ public class SearchView {
                 playMusic();
             }
         });
+        nextBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                playNext();
+            }
+        });
+        beforeBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                playBefore();
+            }
+        });
     }
+
+
+    private void playNext () {
+        if (playerController != null) {
+            playerController.playNext();
+        }
+    }
+
+    private void playBefore () {
+        if (playerController != null) {
+            playerController.playBefore();
+        }
+    }
+
 
 
     public void playMusic () {
@@ -208,24 +234,25 @@ public class SearchView {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 1) {   // 双击打开（推荐）
+                    currentItems = items;
                     MusicItem selectedItem = searchList.getSelectionModel().getSelectedItem();
-                    openPlayerWindow(selectedItem,items);
+                    openPlayerWindow(searchList.getSelectionModel().getSelectedIndex(), selectedItem,items);
                 }
             }
         });
     }
 
 
-    private void openPlayerWindow(MusicItem musicItem,ObservableList<MusicItem> items) {
+    private void openPlayerWindow(int playIndex,MusicItem musicItem,ObservableList<MusicItem> items) {
         try {
             showPlayCard(musicItem);
             playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/PlayerView.fxml"));
             Parent root = loader.load();
             // 获取 PlayerView 的控制器，并传递数据
-            PlayerView playerController = loader.getController();
-            playerController.startMusic(musicItem,items,((Stage) searchList.getScene().getWindow()));     // ← 关键：传递数据
-
+            playerController = loader.getController();
+            playerController.startMusic(playIndex,musicItem,items,((Stage) searchList.getScene().getWindow()));     // ← 关键：传递数据
+            playerController.setSearchView(this);
             // 创建新窗口
             playerStage = new Stage();
             playerStage.setTitle("正在播放:" + musicItem.song);
