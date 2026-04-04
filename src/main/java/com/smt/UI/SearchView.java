@@ -66,7 +66,7 @@ public class SearchView {
 
     public Timer timer;
 
-    public boolean isSwitchMusic = false;
+
 
     public Stage playerStage;
 
@@ -78,18 +78,18 @@ public class SearchView {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (playerStage != null) {
+                if (MusicPlayer.getInstance().isPlaying()) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            showPlayCard(MusicPlayer.getInstance().getCurrentMusicItem());
+                            playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
                         }
                     });
                 } else {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            playCard.setVisible(false);
+                            playBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
                         }
                     });
                 }
@@ -116,12 +116,14 @@ public class SearchView {
 
 
     public void playMusic () {
-        if (MusicPlayer.getInstance().isPlaying()) {
-            playBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
-            MusicPlayer.getInstance().pause();
-        }  else {
-            playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
-            MusicPlayer.getInstance().resume();
+        if (MusicPlayer.getInstance().getCurrentMusicItem() != null) {
+            if (MusicPlayer.getInstance().isPlaying()) {
+                playBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
+                MusicPlayer.getInstance().pause();
+            } else {
+                playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
+                MusicPlayer.getInstance().resume();
+            }
         }
     }
 
@@ -131,11 +133,7 @@ public class SearchView {
 
     public void showPlayCard (MusicItem musicItem) {
         if (musicItem != null) {
-            playCard.setVisible(true);
-            if (isSwitchMusic) {
-                MusicPlayer.getInstance().loadCoverImage(musicItem.coverUrl, cover, new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
-                isSwitchMusic = false;
-            }
+            MusicPlayer.getInstance().loadCoverImage(musicItem.coverUrl, cover, new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
             msg.setText(musicItem.song + "-" + musicItem.singer);
         }
     }
@@ -210,7 +208,6 @@ public class SearchView {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 1) {   // 双击打开（推荐）
-                    isSwitchMusic = true;
                     MusicItem selectedItem = searchList.getSelectionModel().getSelectedItem();
                     openPlayerWindow(selectedItem,items);
                 }
@@ -221,6 +218,7 @@ public class SearchView {
 
     private void openPlayerWindow(MusicItem musicItem,ObservableList<MusicItem> items) {
         try {
+            showPlayCard(musicItem);
             playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/PlayerView.fxml"));
             Parent root = loader.load();

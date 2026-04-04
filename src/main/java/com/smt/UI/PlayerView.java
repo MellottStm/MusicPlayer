@@ -6,6 +6,7 @@ import com.smt.Data.MusicItem;
 import com.smt.Utils.MusicPlayer;
 import com.smt.Utils.NetworkUtil;
 import com.smt.Utils.ThreadManager;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,7 +20,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.log4j.Logger;
 import java.util.Objects;
-
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class PlayerView {
@@ -69,6 +71,9 @@ public class PlayerView {
 
     private Stage listStage;
 
+    public Timer timer;
+
+
     @FXML
     public void initialize() {
         logger.info("初始化完成！");
@@ -85,6 +90,27 @@ public class PlayerView {
                 listStage.show();
             }
         });
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (MusicPlayer.getInstance().isPlaying()) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
+                        }
+                    });
+                } else {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            playBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
+                        }
+                    });
+                }
+            }
+        },0,1000);
     }
 
 
