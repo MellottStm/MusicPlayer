@@ -12,6 +12,7 @@ public class MusicItem {
 
     public String coverUrl;
 
+    public boolean isCollected;//是否收藏
 
     public MusicItem () {
 
