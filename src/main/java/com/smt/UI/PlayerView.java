@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -183,7 +184,13 @@ public class PlayerView {
                 NetworkUtil.okHttpGet(msg, Configure.getMusicPlayUrl, new NetworkUtil.HttpCallBack() {
                     @Override
                     public void callBackFail(String error) {
-
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText((Stage) playBtn.getScene().getWindow(),
+                                        "播放请求失败!", 3000);
+                            }
+                        });
                     }
 
                     @Override

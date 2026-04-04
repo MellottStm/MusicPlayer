@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -22,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.apache.log4j.Logger;
 import java.util.Objects;
 import java.util.Timer;
@@ -190,6 +192,8 @@ public class SearchView {
                                     searchButton.setDisable(false);
                                     loadingIndicator.setVisible(false);
                                     searchList.setVisible(false);
+                                    Toast.makeText((Stage) playBtn.getScene().getWindow(),
+                                            "搜索请求失败!", 3000);
                                 }
                             });
                         }
