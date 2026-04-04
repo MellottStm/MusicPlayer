@@ -292,6 +292,10 @@ public class SearchView {
         if (musicItem != null) {
             MusicPlayer.getInstance().loadCoverImage(musicItem.coverUrl, cover, new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
             msg.setText(musicItem.song + "-" + musicItem.singer);
+            isCollectedBtn.setVisible(true);
+            playBtn.setVisible(true);
+            nextBtn.setVisible(true);
+            beforeBtn.setVisible(true);
         }
     }
 
