@@ -1,5 +1,6 @@
 package com.smt.UI;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.smt.Configure;
 import com.smt.Data.MusicItem;
@@ -71,13 +72,56 @@ public class SearchView {
     @FXML
     public Label msg;
 
-    public Timer timer;
+    @FXML
+    private ImageView playViewCoverImage;
 
-    public Stage playerStage;
+    @FXML
+    private Label playViewSong;
+
+    @FXML
+    private Label playViewSinger;
+
+    @FXML
+    private Label playViewDuration;
+
+    @FXML
+    private Label playViewCurrentDuration;
+
+    @FXML
+    private Button playViewBeforeBtn;
+
+    @FXML
+    private Button playViewPlayBtn;
+
+    @FXML
+    private Button playViewNextBtn;
+
+    @FXML
+    private Button playViewPlayModBtn;
+
+    @FXML
+    private Button playViewListBtn;
+
+    @FXML
+    private Slider playViewProgressSlider;
+
+    @FXML
+    public Button playViewIsCollectedBtn;
+
+    @FXML
+    public AnchorPane playView;
+
+    public Timer timer;
 
     public ObservableList<MusicItem> currentItems;
 
-    private PlayerView playerController;
+    private boolean isDrag;
+
+    private MusicItem musicItem;
+
+    private ObservableList<MusicItem> musicItemList;
+
+    private int playIndex;
 
     @FXML
     public void initialize() {
@@ -107,10 +151,7 @@ public class SearchView {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 1) {   // 双击打开（推荐）
-                    if (playerStage != null) {
-                        ((Stage) searchList.getScene().getWindow()).hide();
-                        playerStage.show();
-                    }
+                    openPlayView();
                 }
             }
         });
@@ -132,20 +173,100 @@ public class SearchView {
                 playBefore();
             }
         });
+
+
+
+        playViewPlayBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                playMusic();
+            }
+        });
+        playViewListBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                closePlayView();
+            }
+        });
+
+        playViewProgressSlider.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                isDrag = true;
+            }
+        });
+
+        playViewProgressSlider.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (MusicPlayer.getInstance().getTotalTime() > 0) {
+                    MusicPlayer.getInstance().seekTo(playViewProgressSlider.getValue());
+                }
+                isDrag = false;
+            }
+        });
+        playViewProgressSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (MusicPlayer.getInstance().getTotalTime() > 0) {
+                double seconds = newVal.doubleValue();
+                playViewCurrentDuration.setText(formatSeconds(seconds));   // 下面会给出
+            }
+        });
+        playViewNextBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                playNext();
+            }
+        });
+
+        playViewBeforeBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                playBefore();
+            }
+        });
+
+
     }
 
 
-    private void playNext () {
-        if (playerController != null) {
-            playerController.playNext();
+    private String formatSeconds(double seconds) {
+        if (seconds < 0) seconds = 0;
+        int min = (int) (seconds / 60);
+        int sec = (int) (seconds % 60);
+        return String.format("%02d:%02d", min, sec);
+    }
+
+
+    private void openPlayView () {
+        playView.setVisible(true);
+    }
+
+    private void closePlayView () {
+        playView.setVisible(false);
+    }
+
+
+
+    public void playNext () {
+        if (playIndex < musicItemList.size() - 1) {
+            playIndex ++;
+        } else {
+            playIndex = 0;
         }
+        showPlayCard(musicItemList.get(playIndex));
+        startMusic (playIndex,musicItemList.get(playIndex), musicItemList);
     }
 
-    private void playBefore () {
-        if (playerController != null) {
-            playerController.playBefore();
+    public void playBefore () {
+        if (playIndex > 0) {
+            playIndex --;
+        } else {
+            playIndex = musicItemList.size() - 1;
         }
+        showPlayCard(musicItemList.get(playIndex));
+        startMusic (playIndex,musicItemList.get(playIndex), musicItemList);
     }
+
 
 
 
@@ -153,9 +274,11 @@ public class SearchView {
         if (MusicPlayer.getInstance().getCurrentMusicItem() != null) {
             if (MusicPlayer.getInstance().isPlaying()) {
                 playBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
+                playViewPlayBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
                 MusicPlayer.getInstance().pause();
             } else {
                 playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
+                playViewPlayBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
                 MusicPlayer.getInstance().resume();
             }
         }
@@ -254,34 +377,89 @@ public class SearchView {
 
 
     private void openPlayerWindow(int playIndex,MusicItem musicItem,ObservableList<MusicItem> items) {
-        try {
-            showPlayCard(musicItem);
-            playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/PlayerView.fxml"));
-            Parent root = loader.load();
-            // 获取 PlayerView 的控制器，并传递数据
-            playerController = loader.getController();
-            playerController.startMusic(playIndex,musicItem,items,((Stage) searchList.getScene().getWindow()));     // ← 关键：传递数据
-            playerController.setSearchView(this);
-            // 创建新窗口
-            playerStage = new Stage();
-            playerStage.setTitle("正在播放:" + musicItem.song);
-            playerStage.initOwner(searchList.getScene().getWindow()); // 绑定父窗口
-            try {
-                Image icon = new Image(Main.class.getResourceAsStream("/Img/icon.jpg"));
-                playerStage.getIcons().add(icon);
-            } catch (Exception e) {
-                System.out.println("loading fail");
-            }
-            Scene scene = new Scene(root, 850, 550);
-            playerStage.setScene(scene);
-            playerStage.setResizable(false);
-            ((Stage) searchList.getScene().getWindow()).hide();
-            playerStage.show();
-        } catch (Exception e) {
-            logger.error("打开 PlayerView 失败", e);
-        }
+        showPlayCard(musicItem);
+        playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
+        openPlayView();
+        startMusic(playIndex,musicItem,items);     // ← 关键：传递数据
     }
+
+
+    public void startMusic (int playIndex,MusicItem musicItem, ObservableList<MusicItem> musicItemList) {
+        this.musicItem = musicItem;
+        this.musicItemList = musicItemList;
+        this.playIndex = playIndex;
+        MusicPlayer.getInstance().loadCoverImage(this.musicItem.coverUrl,playViewCoverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
+        playViewSinger.setText("艺术家:" + musicItem.singer);
+        playViewSong.setText("歌:" + musicItem.song);
+        playViewDuration.setText("00:00");
+        ThreadManager.setThreadToPool(new Runnable() {
+            @Override
+            public void run() {
+                String msg = "?type=song&id=" + musicItem.id;
+                NetworkUtil.okHttpGet(msg, Configure.getMusicPlayUrl, new NetworkUtil.HttpCallBack() {
+                    @Override
+                    public void callBackFail(String error) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText((Stage) playBtn.getScene().getWindow(),
+                                        "播放请求失败!", 3000);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void callBackSuccess(String response) {
+                        JSONArray resJson = JSONArray.parseArray(response);
+                        musicPlay(resJson);
+                    }
+                });
+            }
+        });
+    }
+
+
+    public void musicPlay (JSONArray resJson) {
+        MusicPlayer.getInstance().play(this.musicItem, resJson, new MusicPlayer.PlayerCallBack() {
+            @Override
+            public void onReady() {
+                playViewDuration.setText(MusicPlayer.getInstance().getTotalDuration());
+                playViewProgressSlider.setValue(0);
+                playViewProgressSlider.setMax(MusicPlayer.getInstance().getTotalTime());
+            }
+
+            @Override
+            public void onProgress(String duration) {
+                logger.info("当前播放进度:" + duration);
+                playViewCurrentDuration.setText(duration);
+                if (!isDrag) {
+                    playViewProgressSlider.setValue(MusicPlayer.getInstance().getCurrentTime());
+                }
+            }
+
+
+            @Override
+            public void onComplete() {
+                playViewProgressSlider.setValue(0);
+                logger.info("已播放完毕!");
+                switch (Configure.currentPlayMod) {
+                    case list:
+                        logger.info("列表循环:播放下一首");
+                        playNext();
+                        break;
+                    case single:
+                        logger.info("单曲循环:继续播放当前音乐");
+                        break;
+                    case random:
+                        logger.info("随机播放:随机播放下一首");
+                        break;
+                }
+            }
+        });
+        playViewPlayBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
+    }
+
+
 
 
 }

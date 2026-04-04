@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -23,6 +24,22 @@
             <Label fx:id="msg" layoutX="90.0" layoutY="17.0" prefHeight="20.0" prefWidth="335.0" styleClass="music-song" stylesheets="@../styles.css" />
             <Button fx:id="collectedListBtn" layoutX="590.0" layoutY="15.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="28.0" styleClass="play-list-button" stylesheets="@../styles.css" />
             <Button fx:id="isCollectedBtn" layoutX="632.0" layoutY="15.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="28.0" styleClass="is-collected-button" stylesheets="@../styles.css" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="playView" prefHeight="550.0" prefWidth="850.0" styleClass="search-root" stylesheets="@../styles.css" visible="false">
+         <children>
+            <ImageView fx:id="playViewCoverImage" fitHeight="269.0" fitWidth="273.0" layoutX="152.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="playViewSong" layoutX="471.0" layoutY="172.0" styleClass="music-singer" stylesheets="@../styles.css" text="歌手" />
+            <Label fx:id="playViewSinger" layoutX="471.0" layoutY="230.0" styleClass="music-singer" stylesheets="@../styles.css" text="歌名" />
+            <Label fx:id="playViewDuration" layoutX="34.0" layoutY="415.0" styleClass="music-singer" stylesheets="@../styles.css" text="00:00" />
+            <Label fx:id="playViewCurrentDuration" layoutX="777.0" layoutY="413.0" styleClass="music-singer" stylesheets="@../styles.css" text="00:00" />
+            <Button fx:id="playViewBeforeBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="29.0" layoutY="482.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="29.0" styleClass="before-button" stylesheets="@../styles.css" textAlignment="JUSTIFY" />
+            <Button fx:id="playViewPlayBtn" layoutX="74.0" layoutY="475.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="44.0" styleClass="play-button" stylesheets="@../styles.css" />
+            <Button fx:id="playViewNextBtn" layoutX="131.0" layoutY="482.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="44.0" styleClass="next-button" stylesheets="@../styles.css" />
+            <Button fx:id="playViewPlayModBtn" layoutX="795.0" layoutY="482.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="44.0" styleClass="play-mod-button" stylesheets="@../styles.css" />
+            <Button fx:id="playViewListBtn" layoutX="22.0" layoutY="20.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="35.0" styleClass="play-list-button" stylesheets="@../styles.css" />
+            <Slider fx:id="playViewProgressSlider" layoutX="75.0" layoutY="415.0" min="0.0" prefHeight="14.0" prefWidth="696.0" />
+            <Button fx:id="playViewIsCollectedBtn" layoutX="736.0" layoutY="479.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="35.0" styleClass="is-collected-button" stylesheets="@../styles.css" />
          </children>
       </AnchorPane>
    </children>
