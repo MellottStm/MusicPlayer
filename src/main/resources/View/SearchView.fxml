@@ -29,8 +29,8 @@
       <AnchorPane fx:id="playView" layoutY="45.0" prefHeight="545.0" prefWidth="852.0" styleClass="search-root" stylesheets="@../styles.css" visible="false">
          <children>
             <ImageView fx:id="playViewCoverImage" fitHeight="269.0" fitWidth="273.0" layoutX="152.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="playViewSong" layoutX="471.0" layoutY="172.0" styleClass="music-singer" stylesheets="@../styles.css" text="歌手" />
-            <Label fx:id="playViewSinger" layoutX="471.0" layoutY="230.0" styleClass="music-singer" stylesheets="@../styles.css" text="歌名" />
+            <Label fx:id="playViewSong" layoutX="471.0" layoutY="172.0" prefHeight="18.0" prefWidth="273.0" styleClass="music-singer" stylesheets="@../styles.css" text="歌手" />
+            <Label fx:id="playViewSinger" layoutX="471.0" layoutY="230.0" prefHeight="18.0" prefWidth="273.0" styleClass="music-singer" stylesheets="@../styles.css" text="歌名" />
             <Label fx:id="playViewDuration" layoutX="34.0" layoutY="415.0" styleClass="music-singer" stylesheets="@../styles.css" text="00:00" />
             <Label fx:id="playViewCurrentDuration" layoutX="777.0" layoutY="413.0" styleClass="music-singer" stylesheets="@../styles.css" text="00:00" />
             <Button fx:id="playViewBeforeBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="29.0" layoutY="482.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="29.0" styleClass="before-button" stylesheets="@../styles.css" textAlignment="JUSTIFY" />
