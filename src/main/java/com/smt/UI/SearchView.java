@@ -401,6 +401,11 @@ public class SearchView {
             }
             Configure.currentPlayMod = Configure.playMod.getByValue(cacheJson.getString("currentPlayMod"));
             if (Configure.currentPlayMod != null) {
+                for (int i = 0;i < playMode.length;i++) {
+                    if (playMode[i].equals(Configure.currentPlayMod.value)) {
+                        playModeIndex = i;
+                    }
+                }
                 switch (Configure.currentPlayMod) {
                     case list:
                         playViewPlayModBtn.setStyle("-fx-background-image: url(\"Img/radio_list_play.png\");");
@@ -776,7 +781,6 @@ public class SearchView {
 
             @Override
             public void onProgress(String duration) {
-                logger.info("当前播放进度:" + duration);
                 playViewCurrentDuration.setText(duration);
                 if (!isDrag) {
                     playViewProgressSlider.setValue(MusicPlayer.getInstance().getCurrentTime());
