@@ -15,11 +15,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -136,6 +139,15 @@ public class SearchView {
     private double xOffset = 0;
 
     private double yOffset = 0;
+
+    private int currentPage = 1;
+
+    private int maxPage = 5;
+
+    private ObservableList<MusicItem> searchItems = FXCollections.observableArrayList();
+
+    private String keyWord = "";
+
 
     @FXML
     public void initialize() {
@@ -308,10 +320,50 @@ public class SearchView {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == javafx.scene.input.KeyCode.ENTER) {
-                    handleSearch();
+                    if (!searchButton.isDisable()) {
+                        handleSearch();
+                    } else {
+                        Toast.makeText((Stage)titleBar.getScene().getWindow(),"搜索中...",3000);
+                    }
                 }
             }
         });
+        addScrollListener();
+    }
+
+
+
+    private void addScrollListener() {
+        Platform.runLater(() -> {
+            ScrollBar vScrollBar = getVerticalScrollBar(searchList);
+            if (vScrollBar != null) {
+                vScrollBar.valueProperty().addListener((obs, oldValue, newValue) -> {
+                    // 当滚动条到达 95% 以上位置时加载下一页
+                    if (newValue.doubleValue() == 1 && !searchItems.isEmpty()) {
+                        if (currentPage < maxPage && !searchButton.isDisable()) {
+                            currentPage++;
+                            loadPage(currentPage);
+                        } else {
+                            if (currentPage >= maxPage) {
+                                Toast.makeText((Stage) titleBar.getScene().getWindow(), "已没有更多数据!", 3000);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    // 获取 ListView 的垂直滚动条
+    private ScrollBar getVerticalScrollBar(ListView<?> listView) {
+        for (Node node : listView.lookupAll(".scroll-bar")) {
+            if (node instanceof ScrollBar bar) {
+                if (bar.getOrientation() == Orientation.VERTICAL) {
+                    return bar;
+                }
+            }
+        }
+        return null;
     }
 
 
@@ -519,15 +571,18 @@ public class SearchView {
 
     @FXML
     private void handleSearch() {
-        String keyword = searchField.getText().trim();
+        keyWord = searchField.getText().trim();
+        searchField.setText("");
         Configure.imageCache.clear();
-        if (!keyword.isEmpty()) {
-            logger.info("搜索的内容:" + keyword);
+        searchItems.clear();
+        currentPage = 1;
+        if (!keyWord.isEmpty()) {
+            logger.info("搜索的内容:" + keyWord);
             loadingIndicator.setVisible(true);
             searchList.setVisible(false);
             searchButton.setDisable(true);
             // 后面可以在这里写搜索逻辑
-            String msg = "?word=" + keyword + "&page=1&num=20";
+            String msg = "?word=" + keyWord + "&page=" + currentPage + "&num=20";
             ThreadManager.setThreadToPool(new Runnable() {
                 @Override
                 public void run() {
@@ -564,13 +619,56 @@ public class SearchView {
     }
 
 
+    private void loadPage (int page) {
+        logger.info("加载页面:" + page);
+        searchButton.setDisable(true);
+        Toast.makeText((Stage) playBtn.getScene().getWindow(),"加载中...",3000);
+        String msg = "?word=" + keyWord + "&page=" + page + "&num=20";
+        if (!keyWord.isEmpty()) {
+            ThreadManager.setThreadToPool(new Runnable() {
+                @Override
+                public void run() {
+                    NetworkUtil.okHttpGet(msg, Configure.getSearchMusicListUrl, new NetworkUtil.HttpCallBack() {
+                        @Override
+                        public void callBackFail(String error) {
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    searchButton.setDisable(false);
+                                    loadingIndicator.setVisible(false);
+                                    Toast.makeText((Stage) playBtn.getScene().getWindow(),
+                                            "搜索请求失败!", 3000);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void callBackSuccess(String response) {
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    JSONObject resJson = JSONObject.parseObject(response);
+                                    showSearchResult(resJson);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        } else {
+            Toast.makeText((Stage) playBtn.getScene().getWindow(),"搜索内容为空!",3000);
+        }
+    }
+
+
+
+
     public void showSearchResult (JSONObject resJson) {
         searchButton.setDisable(false);
         loadingIndicator.setVisible(false);
         searchList.setVisible(true);
         searchList.setCellFactory(listview -> new MusicCell());
         resJson.getJSONArray("data");
-        ObservableList<MusicItem> items = FXCollections.observableArrayList();
         for (int i = 0;i < resJson.getJSONArray("data").size();i++) {
             JSONObject musicJson = resJson.getJSONArray("data").getJSONObject(i);
             MusicItem musicItem = new MusicItem(
@@ -582,15 +680,15 @@ public class SearchView {
             if (isCollectedMusic(musicItem)) {
                 musicItem.isCollected = true;
             }
-            items.add(musicItem);
+            searchItems.add(musicItem);
         }
-        searchList.setItems(items);
+        searchList.setItems(searchItems);
         searchList.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 1) {
                     MusicItem selectedItem = searchList.getSelectionModel().getSelectedItem();
-                    openPlayerWindow(searchList.getSelectionModel().getSelectedIndex(), selectedItem,items);
+                    openPlayerWindow(searchList.getSelectionModel().getSelectedIndex(), selectedItem,searchItems);
                 }
             }
         });
@@ -598,6 +696,8 @@ public class SearchView {
 
 
     public void showCollectedList () {
+        searchItems.clear();
+        keyWord = "";
         searchButton.setDisable(false);
         loadingIndicator.setVisible(false);
         searchList.setVisible(true);
