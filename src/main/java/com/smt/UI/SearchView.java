@@ -417,21 +417,18 @@ public class SearchView {
     }
 
     private void setCollected (MusicItem musicItem) {
-        if (!musicItem.isCollected) {
-            musicItem.isCollected = true;
-            Configure.collectedList.add(musicItem);
-            Toast.makeText((Stage) titleBar.getScene().getWindow(), "收藏成功", 3000);
-        } else {
+        if (isCollectedMusic(musicItem)) {
             musicItem.isCollected = false;
             Configure.collectedList.removeIf(item -> musicItem.id.equals(item.id));
             Toast.makeText((Stage) titleBar.getScene().getWindow(), "取消收藏", 3000);
-        }
-        if (isCollectedMusic(musicItem)) {
-            isCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
-            playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
-        } else {
             isCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_white.png\");");
             playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_white.png\");");
+        } else {
+            musicItem.isCollected = true;
+            Configure.collectedList.add(musicItem);
+            Toast.makeText((Stage) titleBar.getScene().getWindow(), "收藏成功", 3000);
+            isCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
+            playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
         }
         CacheManager.saveCollectedMusicCache(Configure.collectedList);
     }
