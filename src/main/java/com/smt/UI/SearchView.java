@@ -134,7 +134,7 @@ public class SearchView {
 
     private String[] playMode = {"顺序播放","单曲循环","随机播放"};
 
-    private int playModeIndex = 0;
+    private int playModeIndex;
 
     private double xOffset = 0;
 
@@ -537,7 +537,7 @@ public class SearchView {
             }
         } else {
             if (Configure.currentMusic != null) {
-                if (Configure.collectedList.contains(Configure.currentMusic)) {
+                if (isCollectedMusic(Configure.currentMusic)) {
                     startMusic(Configure.collectedList.indexOf(Configure.currentMusic), Configure.currentMusic, Configure.collectedList);
                 } else {
                     startMusic(0, Configure.currentMusic, Configure.collectedList);
