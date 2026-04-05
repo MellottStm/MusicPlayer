@@ -119,12 +119,9 @@ public class SearchView {
     @FXML
     public Button minBtn;
 
-
     public Timer timer;
 
     private boolean isDrag;
-
-    private MusicItem musicItem;
 
     private ObservableList<MusicItem> musicItemList;
 
@@ -136,7 +133,6 @@ public class SearchView {
 
     private int playModeIndex = 0;
 
-    // 窗口拖动
     private double xOffset = 0;
 
     private double yOffset = 0;
@@ -214,6 +210,7 @@ public class SearchView {
                         Configure.currentPlayMod = Configure.playMod.single;
                         break;
                 }
+                Toast.makeText((Stage)titleBar.getScene().getWindow(),playMode[playModeIndex],3000);
                 CacheManager.savePlayModCache(Configure.currentPlayMod.value);
             }
         });
@@ -246,14 +243,14 @@ public class SearchView {
         isCollectedBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                setCollected(musicItem);
+                setCollected(Configure.currentMusic);
             }
         });
 
         playViewIsCollectedBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                setCollected(musicItem);
+                setCollected(Configure.currentMusic);
             }
         });
 
@@ -371,9 +368,11 @@ public class SearchView {
         if (!musicItem.isCollected) {
             musicItem.isCollected = true;
             Configure.collectedList.add(musicItem);
+            Toast.makeText((Stage) titleBar.getScene().getWindow(), "收藏成功", 3000);
         } else {
             musicItem.isCollected = false;
-            Configure.collectedList.remove(musicItem);
+            Configure.collectedList.removeIf(item -> musicItem.id.equals(item.id));
+            Toast.makeText((Stage) titleBar.getScene().getWindow(), "取消收藏", 3000);
         }
         if (isCollectedMusic(musicItem)) {
             isCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
@@ -627,11 +626,11 @@ public class SearchView {
 
 
     public void startMusic (int playIndex,MusicItem musicItem, ObservableList<MusicItem> musicItemList) {
-        this.musicItem = musicItem;
+        Configure.currentMusic = musicItem;
         CacheManager.saveCurrentMusicCache(musicItem);
         this.musicItemList = musicItemList;
         this.playIndex = playIndex;
-        MusicPlayer.getInstance().loadCoverImage(this.musicItem.coverUrl,playViewCoverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
+        MusicPlayer.getInstance().loadCoverImage(Configure.currentMusic.coverUrl,playViewCoverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
         playViewSinger.setText("艺术家:" + musicItem.singer);
         playViewSong.setText("歌:" + musicItem.song);
         playViewDuration.setText("00:00");
@@ -670,7 +669,7 @@ public class SearchView {
 
 
     public void musicPlay (JSONArray resJson) {
-        MusicPlayer.getInstance().play(this.musicItem, resJson, new MusicPlayer.PlayerCallBack() {
+        MusicPlayer.getInstance().play(Configure.currentMusic, resJson, new MusicPlayer.PlayerCallBack() {
             @Override
             public void onReady() {
                 playViewDuration.setText(MusicPlayer.getInstance().getTotalDuration());
