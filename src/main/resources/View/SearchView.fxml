@@ -8,10 +8,14 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="590.0" prefWidth="850.0" styleClass="search-root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.smt.UI.SearchView">
    <children>
-      <TextField fx:id="searchField" layoutX="14.0" layoutY="59.0" prefHeight="42.0" prefWidth="823.0" promptText="输入你要搜索的音乐" styleClass="search-textfield" stylesheets="@../styles.css" />
+      <TextField fx:id="searchField" layoutX="14.0" layoutY="59.0" opacity="0.3" prefHeight="42.0" prefWidth="823.0" promptText="输入你要搜索的音乐" styleClass="search-textfield" stylesheets="@../styles.css">
+         <font>
+            <Font size="30.0" />
+         </font></TextField>
       <Button fx:id="searchButton" layoutX="742.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleSearch" prefHeight="42.0" prefWidth="96.0" styleClass="search-button" stylesheets="@../styles.css" text="搜索" textAlignment="JUSTIFY" textFill="WHITE" />
       <ListView fx:id="searchList" layoutY="106.0" prefHeight="430.0" prefWidth="850.0" styleClass="music-list-view" stylesheets="@../styles.css" />
       <ProgressIndicator fx:id="loadingIndicator" layoutX="414.0" layoutY="256.0" visible="false" />
