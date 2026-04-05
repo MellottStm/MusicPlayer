@@ -6,7 +6,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
 import java.io.IOException;
+import java.util.Objects;
 
 public class Main extends Application {
     public static void main(String[] args) {
@@ -17,15 +20,16 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         // 加载 SearchView.fxml
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/View/SearchView.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 850, 550);   // 窗口大小可调整
+        Scene scene = new Scene(fxmlLoader.load(), 850, 590);   // 窗口大小可调整
         try {
-            Image icon = new Image(Main.class.getResourceAsStream("/Img/icon.jpg"));
+            Image icon = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/Img/icon.jpg")));
             stage.getIcons().add(icon);
         } catch (Exception e) {
             System.out.println("loading fail");
         }
         // 加载全局样式（推荐方式）
-        scene.getStylesheets().add(Main.class.getResource("/styles.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(Main.class.getResource("/styles.css")).toExternalForm());
+        stage.initStyle(StageStyle.UNDECORATED);     // 去掉系统标题栏
         stage.setResizable(false);
         stage.setTitle("CoreMusic");
         stage.setScene(scene);

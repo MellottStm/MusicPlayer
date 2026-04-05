@@ -9,13 +9,13 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="550.0" prefWidth="850.0" styleClass="search-root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.smt.UI.SearchView">
+<AnchorPane prefHeight="590.0" prefWidth="850.0" styleClass="search-root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.smt.UI.SearchView">
    <children>
-      <TextField fx:id="searchField" layoutX="13.0" layoutY="14.0" prefHeight="42.0" prefWidth="823.0" promptText="输入你要搜索的音乐" styleClass="search-textfield" stylesheets="@../styles.css" />
-      <Button fx:id="searchButton" layoutX="740.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleSearch" prefHeight="42.0" prefWidth="96.0" styleClass="search-button" stylesheets="@../styles.css" text="搜索" textAlignment="JUSTIFY" textFill="WHITE" />
-      <ListView fx:id="searchList" layoutY="70.0" prefHeight="427.0" prefWidth="850.0" styleClass="music-list-view" stylesheets="@../styles.css" />
+      <TextField fx:id="searchField" layoutX="14.0" layoutY="59.0" prefHeight="42.0" prefWidth="823.0" promptText="输入你要搜索的音乐" styleClass="search-textfield" stylesheets="@../styles.css" />
+      <Button fx:id="searchButton" layoutX="742.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleSearch" prefHeight="42.0" prefWidth="96.0" styleClass="search-button" stylesheets="@../styles.css" text="搜索" textAlignment="JUSTIFY" textFill="WHITE" />
+      <ListView fx:id="searchList" layoutY="106.0" prefHeight="430.0" prefWidth="850.0" styleClass="music-list-view" stylesheets="@../styles.css" />
       <ProgressIndicator fx:id="loadingIndicator" layoutX="414.0" layoutY="256.0" visible="false" />
-      <AnchorPane fx:id="playCard" layoutY="497.0" prefHeight="53.0" prefWidth="850.0" styleClass="play-card" stylesheets="@../styles.css">
+      <AnchorPane fx:id="playCard" layoutX="1.0" layoutY="537.0" prefHeight="53.0" prefWidth="850.0" styleClass="play-card" stylesheets="@../styles.css">
          <children>
             <Button fx:id="playBtn" layoutX="406.0" layoutY="9.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="38.0" styleClass="play-button" stylesheets="@../styles.css" visible="false" />
             <Button fx:id="beforeBtn" layoutX="365.0" layoutY="15.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="28.0" styleClass="before-button" stylesheets="@../styles.css" visible="false" />
@@ -26,7 +26,7 @@
             <Button fx:id="isCollectedBtn" layoutX="99.0" layoutY="17.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="28.0" styleClass="is-collected-button" stylesheets="@../styles.css" visible="false" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="playView" prefHeight="550.0" prefWidth="850.0" styleClass="search-root" stylesheets="@../styles.css" visible="false">
+      <AnchorPane fx:id="playView" layoutY="45.0" prefHeight="545.0" prefWidth="852.0" styleClass="search-root" stylesheets="@../styles.css" visible="false">
          <children>
             <ImageView fx:id="playViewCoverImage" fitHeight="269.0" fitWidth="273.0" layoutX="152.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true" />
             <Label fx:id="playViewSong" layoutX="471.0" layoutY="172.0" styleClass="music-singer" stylesheets="@../styles.css" text="歌手" />
@@ -40,6 +40,14 @@
             <Button fx:id="playViewListBtn" layoutX="22.0" layoutY="20.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="35.0" styleClass="close-play-list-button" stylesheets="@../styles.css" />
             <Slider fx:id="playViewProgressSlider" layoutX="75.0" layoutY="415.0" min="0.0" prefHeight="14.0" prefWidth="696.0" />
             <Button fx:id="playViewIsCollectedBtn" layoutX="736.0" layoutY="479.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="35.0" styleClass="is-collected-button" stylesheets="@../styles.css" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="titleBar" prefHeight="46.0" prefWidth="852.0" styleClass="play-card">
+         <children>
+            <Button fx:id="closeBtn" layoutX="808.0" layoutY="4.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="44.0" styleClass="close-btn" stylesheets="@../styles.css" />
+            <Button fx:id="minBtn" layoutX="756.0" layoutY="5.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="52.0" styleClass="min-btn" stylesheets="@../styles.css" />
+            <Button fx:id="minBtn1" layoutY="4.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="44.0" styleClass="logo" stylesheets="@../styles.css" />
+            <Label layoutX="44.0" layoutY="12.0" styleClass="music-song" stylesheets="@../styles.css" text="CoreMusic" />
          </children>
       </AnchorPane>
    </children>

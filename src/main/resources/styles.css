@@ -142,3 +142,27 @@
     -fx-background-position: center;   /* 居中 */
     -fx-background-repeat: no-repeat;
 }
+
+.close-btn {
+    -fx-background-image: url("Img/win_close_btn.png");
+     -fx-background-color: transparent;
+    -fx-background-size: contain;        /* 铺满 */
+    -fx-background-position: center;   /* 居中 */
+    -fx-background-repeat: no-repeat;
+}
+
+.min-btn {
+    -fx-background-image: url("Img/win_min_btn.png");
+     -fx-background-color: transparent;
+    -fx-background-size: contain;        /* 铺满 */
+    -fx-background-position: center;   /* 居中 */
+    -fx-background-repeat: no-repeat;
+}
+
+.logo {
+ -fx-background-image: url("Img/icon.jpg");
+     -fx-background-color: transparent;
+    -fx-background-size: contain;        /* 铺满 */
+    -fx-background-position: center;   /* 居中 */
+    -fx-background-repeat: no-repeat;
+}

@@ -110,6 +110,16 @@ public class SearchView {
     @FXML
     public AnchorPane playView;
 
+    @FXML
+    public AnchorPane titleBar;
+
+    @FXML
+    public Button closeBtn;
+
+    @FXML
+    public Button minBtn;
+
+
     public Timer timer;
 
     private boolean isDrag;
@@ -125,6 +135,11 @@ public class SearchView {
     private String[] playMode = {"顺序播放","单曲循环","随机播放"};
 
     private int playModeIndex = 0;
+
+    // 窗口拖动
+    private double xOffset = 0;
+
+    private double yOffset = 0;
 
     @FXML
     public void initialize() {
@@ -153,6 +168,24 @@ public class SearchView {
                 }
             }
         },0,1000);
+
+        // 拖动窗口
+        titleBar.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        titleBar.setOnMouseDragged(event -> {
+            ((Stage)titleBar.getScene().getWindow()).setX(event.getScreenX() - xOffset);
+            ((Stage)titleBar.getScene().getWindow()).setY(event.getScreenY() - yOffset);
+        });
+
+        // 最小化
+        minBtn.setOnAction(e -> ((Stage)titleBar.getScene().getWindow()).setIconified(true));
+
+        // 关闭
+        closeBtn.setOnAction(e -> ((Stage)titleBar.getScene().getWindow()).close());
+
         collectedListBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
