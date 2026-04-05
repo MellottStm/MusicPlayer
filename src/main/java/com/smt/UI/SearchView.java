@@ -273,6 +273,15 @@ public class SearchView {
                 playBefore();
             }
         });
+
+        searchField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                    handleSearch();
+                }
+            }
+        });
     }
 
 
@@ -299,6 +308,15 @@ public class SearchView {
                     cacheJson.getJSONObject("currentMusic").getString("coverUrl"),
                     cacheJson.getJSONObject("currentMusic").getBoolean("isCollected"));
             showPlayCard(Configure.currentMusic);
+            MusicPlayer.getInstance().loadCoverImage(Configure.currentMusic.coverUrl,playViewCoverImage,new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
+            playViewSinger.setText("艺术家:" + Configure.currentMusic.singer);
+            playViewSong.setText("歌:" + Configure.currentMusic.song);
+            playViewDuration.setText("00:00");
+            if (isCollectedMusic(Configure.currentMusic)) {
+                playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
+            } else {
+                playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_white.png\");");
+            }
             Configure.currentPlayMod = Configure.playMod.getByValue(cacheJson.getString("currentPlayMod"));
             if (Configure.currentPlayMod != null) {
                 switch (Configure.currentPlayMod) {
@@ -462,14 +480,6 @@ public class SearchView {
             nextBtn.setVisible(true);
             beforeBtn.setVisible(true);
         }
-        searchField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if (keyEvent.getCode() == javafx.scene.input.KeyCode.ENTER) {
-                    handleSearch();
-                }
-            }
-        });
     }
 
 
