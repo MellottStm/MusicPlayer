@@ -111,8 +111,6 @@ public class SearchView {
 
     public Timer timer;
 
-    public ObservableList<MusicItem> currentItems;
-
     private boolean isDrag;
 
     private MusicItem musicItem;
@@ -140,6 +138,7 @@ public class SearchView {
                         @Override
                         public void run() {
                             playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
+                            playViewPlayBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
                         }
                     });
                 } else {
@@ -147,6 +146,7 @@ public class SearchView {
                         @Override
                         public void run() {
                             playBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
+                            playViewPlayBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
                         }
                     });
                 }
@@ -155,7 +155,7 @@ public class SearchView {
         collectedListBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
+                showCollectedList();
             }
         });
         playViewPlayModBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -180,6 +180,7 @@ public class SearchView {
                         Configure.currentPlayMod = Configure.playMod.single;
                         break;
                 }
+                CacheManager.savePlayModCache(Configure.currentPlayMod.value);
             }
         });
         playCard.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -208,7 +209,19 @@ public class SearchView {
                 playBefore();
             }
         });
+        isCollectedBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                setCollected(musicItem);
+            }
+        });
 
+        playViewIsCollectedBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                setCollected(musicItem);
+            }
+        });
 
 
         playViewPlayBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -265,15 +278,59 @@ public class SearchView {
     public void loadData () {
         JSONObject cacheJson = CacheManager.loadCache();
         if (cacheJson != null) {
-            MusicItem musicItem = new MusicItem(
+            if (cacheJson.getJSONArray("collectedMusic") != null) {
+                for (int i = 0; i < cacheJson.getJSONArray("collectedMusic").size(); i++) {
+                    Configure.collectedList.add(new MusicItem(
+                            cacheJson.getJSONArray("collectedMusic").getJSONObject(i).getString("id"),
+                            cacheJson.getJSONArray("collectedMusic").getJSONObject(i).getString("song"),
+                            cacheJson.getJSONArray("collectedMusic").getJSONObject(i).getString("singer"),
+                            cacheJson.getJSONArray("collectedMusic").getJSONObject(i).getString("album"),
+                            cacheJson.getJSONArray("collectedMusic").getJSONObject(i).getString("coverUrl"),
+                            cacheJson.getJSONArray("collectedMusic").getJSONObject(i).getBoolean("isCollected")));
+                }
+                showCollectedList();
+            }
+            Configure.currentMusic = new MusicItem(
                     cacheJson.getJSONObject("currentMusic").getString("id"),
                     cacheJson.getJSONObject("currentMusic").getString("song"),
                     cacheJson.getJSONObject("currentMusic").getString("singer"),
                     cacheJson.getJSONObject("currentMusic").getString("album"),
                     cacheJson.getJSONObject("currentMusic").getString("coverUrl"),
                     cacheJson.getJSONObject("currentMusic").getBoolean("isCollected"));
-            showPlayCard(musicItem);
+            showPlayCard(Configure.currentMusic);
+            Configure.currentPlayMod = Configure.playMod.getByValue(cacheJson.getString("currentPlayMod"));
+            if (Configure.currentPlayMod != null) {
+                switch (Configure.currentPlayMod) {
+                    case list:
+                        playViewPlayModBtn.setStyle("-fx-background-image: url(\"Img/radio_list_play.png\");");
+                        break;
+                    case random:
+                        playViewPlayModBtn.setStyle("-fx-background-image: url(\"Img/radio_random_play.png\");");
+                        break;
+                    case single:
+                        playViewPlayModBtn.setStyle("-fx-background-image: url(\"Img/radio_loop_play.png\");");
+                        break;
+                }
+            }
         }
+    }
+
+    private void setCollected (MusicItem musicItem) {
+        if (!musicItem.isCollected) {
+            musicItem.isCollected = true;
+            Configure.collectedList.add(musicItem);
+        } else {
+            musicItem.isCollected = false;
+            Configure.collectedList.remove(musicItem);
+        }
+        if (isCollectedMusic(musicItem)) {
+            isCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
+            playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
+        } else {
+            isCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_white.png\");");
+            playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_white.png\");");
+        }
+        CacheManager.saveCollectedMusicCache(Configure.collectedList);
     }
 
 
@@ -368,10 +425,18 @@ public class SearchView {
                 playBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
                 playViewPlayBtn.setStyle("-fx-background-image: url(\"Img/radio_play.png\");");
                 MusicPlayer.getInstance().pause();
-            } else {
+            }  else {
                 playBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
                 playViewPlayBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
                 MusicPlayer.getInstance().resume();
+            }
+        } else {
+            if (Configure.currentMusic != null) {
+                if (Configure.collectedList.contains(Configure.currentMusic)) {
+                    startMusic(Configure.collectedList.indexOf(Configure.currentMusic), Configure.currentMusic, Configure.collectedList);
+                } else {
+                    startMusic(0, Configure.currentMusic, Configure.collectedList);
+                }
             }
         }
     }
@@ -385,6 +450,13 @@ public class SearchView {
             MusicPlayer.getInstance().loadCoverImage(musicItem.coverUrl, cover, new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Img/music_bg.jpg"))));
             msg.setText(musicItem.song + "-" + musicItem.singer);
             isCollectedBtn.setVisible(true);
+            if (isCollectedMusic(musicItem)) {
+                isCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
+                playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
+            } else {
+                isCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_white.png\");");
+                playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_white.png\");");
+            }
             playBtn.setVisible(true);
             nextBtn.setVisible(true);
             beforeBtn.setVisible(true);
@@ -397,7 +469,7 @@ public class SearchView {
     @FXML
     private void handleSearch() {
         String keyword = searchField.getText().trim();
-        Configure.IMAGE_CACHE.clear();
+        Configure.imageCache.clear();
         if (!keyword.isEmpty()) {
             logger.info("搜索的内容:" + keyword);
             loadingIndicator.setVisible(true);
@@ -416,7 +488,6 @@ public class SearchView {
                                 public void run() {
                                     searchButton.setDisable(false);
                                     loadingIndicator.setVisible(false);
-                                    searchList.setVisible(false);
                                     Toast.makeText((Stage) playBtn.getScene().getWindow(),
                                             "搜索请求失败!", 3000);
                                 }
@@ -451,25 +522,48 @@ public class SearchView {
         ObservableList<MusicItem> items = FXCollections.observableArrayList();
         for (int i = 0;i < resJson.getJSONArray("data").size();i++) {
             JSONObject musicJson = resJson.getJSONArray("data").getJSONObject(i);
-            items.add(new MusicItem(
+            MusicItem musicItem = new MusicItem(
                     musicJson.getString("id"),
                     musicJson.getString("song"),
                     musicJson.getString("singer"),
                     musicJson.getString("album"),
-                    musicJson.getString("cover"),false));
+                    musicJson.getString("cover"),false);
+            if (isCollectedMusic(musicItem)) {
+                musicItem.isCollected = true;
+            }
+            items.add(musicItem);
         }
         searchList.setItems(items);
         searchList.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getClickCount() == 1) {   // 双击打开（推荐）
-                    currentItems = items;
+                if (mouseEvent.getClickCount() == 1) {
                     MusicItem selectedItem = searchList.getSelectionModel().getSelectedItem();
                     openPlayerWindow(searchList.getSelectionModel().getSelectedIndex(), selectedItem,items);
                 }
             }
         });
     }
+
+
+    public void showCollectedList () {
+        searchButton.setDisable(false);
+        loadingIndicator.setVisible(false);
+        searchList.setVisible(true);
+        searchList.setCellFactory(listview -> new MusicCell());
+        searchList.setItems(Configure.collectedList);
+        searchList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 1) {
+                    MusicItem selectedItem = searchList.getSelectionModel().getSelectedItem();
+                    openPlayerWindow(searchList.getSelectionModel().getSelectedIndex(), selectedItem,Configure.collectedList);
+                }
+            }
+        });
+    }
+
+
 
 
     private void openPlayerWindow(int playIndex,MusicItem musicItem,ObservableList<MusicItem> items) {
@@ -489,6 +583,13 @@ public class SearchView {
         playViewSinger.setText("艺术家:" + musicItem.singer);
         playViewSong.setText("歌:" + musicItem.song);
         playViewDuration.setText("00:00");
+        if (isCollectedMusic(musicItem)) {
+            isCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
+            playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_red.png\");");
+        } else {
+            isCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_white.png\");");
+            playViewIsCollectedBtn.setStyle("-fx-background-image: url(\"Img/is_collected_white.png\");");
+        }
         ThreadManager.setThreadToPool(new Runnable() {
             @Override
             public void run() {
@@ -558,6 +659,15 @@ public class SearchView {
         playViewPlayBtn.setStyle("-fx-background-image: url(\"Img/radio_stop.png\");");
     }
 
+
+    public boolean isCollectedMusic (MusicItem musicItem) {
+        for (MusicItem item:Configure.collectedList) {
+            if (item.id.equals(musicItem.id)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 

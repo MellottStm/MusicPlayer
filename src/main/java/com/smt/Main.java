@@ -27,7 +27,7 @@ public class Main extends Application {
         // 加载全局样式（推荐方式）
         scene.getStylesheets().add(Main.class.getResource("/styles.css").toExternalForm());
         stage.setResizable(false);
-        stage.setTitle("MusicPlayer");
+        stage.setTitle("CoreMusic");
         stage.setScene(scene);
         stage.show();
         SearchView searchView = fxmlLoader.getController();

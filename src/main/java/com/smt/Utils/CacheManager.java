@@ -2,6 +2,7 @@ package com.smt.Utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.smt.Configure;
 import com.smt.Data.MusicItem;
 import javafx.collections.ObservableList;
 import org.apache.log4j.Logger;
@@ -52,6 +53,28 @@ public class CacheManager {
         }
     }
 
+    public static void savePlayModCache (String playMod) {
+        try {
+            // 确保目录存在
+            File file = new File(CACHE_FILE);
+            File parentDir = file.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs();
+            }
+            JSONObject saveJson = loadCache();
+            // 写入 JSON
+            if (saveJson == null) {
+                saveJson = new JSONObject();
+            }
+            saveJson.put("currentPlayMod",playMod);
+            Path path = Paths.get(CACHE_FILE);
+            Files.createDirectories(path.getParent());
+            Files.writeString(path, saveJson.toJSONString(), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            logger.warn(e);
+        }
+    }
+
 
     public static void saveCollectedMusicCache(ObservableList<MusicItem> items) {
         try {
@@ -66,7 +89,7 @@ public class CacheManager {
             if (saveJson == null) {
                 saveJson = new JSONObject();
             }
-            JSONArray collectedMusicJson = new JSONArray();
+            JSONArray collectedMusicJsonArray = new JSONArray();
             for (MusicItem musicItem:items) {
                 JSONObject musicJson = new JSONObject();
                 musicJson.put("id",musicItem.id);
@@ -75,9 +98,9 @@ public class CacheManager {
                 musicJson.put("coverUrl",musicItem.coverUrl);
                 musicJson.put("album",musicItem.album);
                 musicJson.put("isCollected",musicItem.isCollected);
-                collectedMusicJson.add(musicJson);
+                collectedMusicJsonArray.add(musicJson);
             }
-            saveJson.put("collectedMusic",collectedMusicJson);
+            saveJson.put("collectedMusic",collectedMusicJsonArray);
             Path path = Paths.get(CACHE_FILE);
             Files.createDirectories(path.getParent());
             Files.writeString(path, saveJson.toJSONString(), StandardCharsets.UTF_8);
@@ -90,7 +113,7 @@ public class CacheManager {
 
     /** 从 JSON 文件加载缓存 */
     public static JSONObject loadCache() {
-        JSONObject loadJson = new JSONObject();
+        JSONObject loadJson = null;
         try {
             File file = new File(CACHE_FILE);
             if (!file.exists()) {
@@ -98,11 +121,11 @@ public class CacheManager {
                 return null;
             }
         String content = Files.readString(Paths.get(CACHE_FILE));
-        loadJson  = JSONObject.parseObject(content);
+        loadJson = JSONObject.parseObject(content);
+        logger.info("加载获取的缓存内容:" + loadJson.toJSONString());
         } catch (Exception ex) {
             logger.warn(ex);
         }
-        logger.info("加载获取的缓存内容:" + loadJson.toJSONString());
         return loadJson;
     }
 
