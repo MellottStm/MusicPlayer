@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -461,6 +462,14 @@ public class SearchView {
             nextBtn.setVisible(true);
             beforeBtn.setVisible(true);
         }
+        searchField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                    handleSearch();
+                }
+            }
+        });
     }
 
 
@@ -508,7 +517,7 @@ public class SearchView {
                 }
             });
         } else {
-           logger.info("搜索内容为空!");
+            Toast.makeText((Stage) playBtn.getScene().getWindow(),"搜索内容为空!",3000);
         }
     }
 
