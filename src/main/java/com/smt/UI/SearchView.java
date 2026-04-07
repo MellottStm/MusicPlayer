@@ -230,7 +230,9 @@ public class SearchView {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 1) {   // 双击打开（推荐）
-                    openPlayView();
+                    if (Configure.currentMusic != null) {
+                        openPlayView();
+                    }
                 }
             }
         });

@@ -37,7 +37,7 @@ public class Configure {
         }
     }
 
-    public static MusicItem currentMusic = new MusicItem();
+    public static MusicItem currentMusic;
 
     public static playMod currentPlayMod = playMod.list;
 
