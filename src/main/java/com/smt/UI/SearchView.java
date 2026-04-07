@@ -197,7 +197,9 @@ public class SearchView {
         collectedListBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                showCollectedList();
+                if (!searchButton.isDisable()) {
+                    showCollectedList();
+                }
             }
         });
         playViewPlayModBtn.setOnAction(new EventHandler<ActionEvent>() {
