@@ -1,5 +1,5 @@
 # 安装包下载：
-https://github.com/MellottStm/MusicPlayer/releases/tag/main
+https://github.com/MellottStm/MusicPlayer/releases
 # 运行:
 mvn clean javafx:run
 # 项目打包:
